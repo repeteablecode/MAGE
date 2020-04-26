@@ -13,11 +13,9 @@
 struct tWAVEFORMATEX;
 typedef tWAVEFORMATEX WAVEFORMATEX;
 
-class SoundSystem
-{
+class SoundSystem{
 public:
-	class APIException : public Exceptions
-	{
+	class APIException : public Exceptions{
 	public:
 		APIException( HRESULT hr,const wchar_t * file,unsigned int line,const std::wstring& note );
 		std::wstring GetErrorName() const;
@@ -27,8 +25,7 @@ public:
 	private:
 		HRESULT hr;
 	};
-	class FileException : public Exceptions
-	{
+	class FileException : public Exceptions{
 	public:
 		FileException( const wchar_t* file,unsigned int line,const std::wstring& note,const std::wstring& filename );
 		virtual std::wstring GetFullMessage() const override;
@@ -37,24 +34,16 @@ public:
 		std::wstring filename;
 	};
 private:
-	class MFInitializer
-	{
+	class MFInitializer{
 	public:
 		MFInitializer();
 		~MFInitializer();
 	private:
 		HRESULT hr;
 	};
-	class XAudioDll
-	{
+	class XAudioDll{
 	private:
-		enum class LoadType
-		{
-			Folder,
-			Local,
-			System,
-			Invalid
-		};
+		enum class LoadType{ Folder, Local, System, Invalid };
 	public:
 		XAudioDll();
 		~XAudioDll();
@@ -73,8 +62,7 @@ private:
 #endif
 	};
 public:
-	class Channel
-	{
+	class Channel{
 		friend class Sound;
 	public:
 		Channel( SoundSystem& sys );
@@ -118,19 +106,10 @@ private:
 	static constexpr size_t nChannels = 64u;
 };
 
-class Sound
-{
+class Sound{
 	friend SoundSystem::Channel;
 public:
-	enum class LoopType
-	{
-		NotLooping,
-		AutoEmbeddedCuePoints,
-		AutoFullSound,
-		ManualFloat,
-		ManualSample,
-		Invalid
-	};
+	enum class LoopType{ NotLooping, AutoEmbeddedCuePoints, AutoFullSound, ManualFloat, ManualSample, Invalid };
 public:
 	Sound() = default;
 	// for backwards compatibility--2nd parameter false -> NotLooping (does not work with non-wav)

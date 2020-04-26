@@ -1,20 +1,13 @@
 //--------------------------------------------------------------------------------------
 // File: DXErr.cpp
-//
 // DirectX Error Library
-//
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
 // ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
 // PARTICULAR PURPOSE.
-//
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------
-
-// This version only supports UNICODE.
-
 #include "dxerr.h"
-
 #include <stdio.h>
 #include <algorithm>
 
@@ -56,9 +49,7 @@
 
 //-----------------------------------------------------------------------------
 #define BUFFER_SIZE 3000
-
 #pragma warning( disable : 6001 6221 )
-
 //--------------------------------------------------------------------------------------
 #define  CHK_ERR(hrchk, strOut) \
         case hrchk: \
@@ -80,12 +71,8 @@
              return L##strOut;
 
 //-----------------------------------------------------
-const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
-{
-   switch(hr)
-   {
-// Commmented out codes are actually alises for other codes
-
+const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr ){
+   switch(hr){
 // -------------------------------------------------------------
 // Common Win32 error codes
 // -------------------------------------------------------------
@@ -137,7 +124,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(OLE_E_LAST)
         CHK_ERRA(OLE_S_FIRST)
         CHK_ERRA(OLE_S_LAST)
-//        CHK_ERRA(OLE_E_OLEVERB)
         CHK_ERRA(OLE_E_ADVF)
         CHK_ERRA(OLE_E_ENUM_NOMORE)
         CHK_ERRA(OLE_E_ADVISENOTSUPPORTED)
@@ -170,14 +156,12 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(DRAGDROP_E_LAST)
         CHK_ERRA(DRAGDROP_S_FIRST)
         CHK_ERRA(DRAGDROP_S_LAST)
-//        CHK_ERRA(DRAGDROP_E_NOTREGISTERED)
         CHK_ERRA(DRAGDROP_E_ALREADYREGISTERED)
         CHK_ERRA(DRAGDROP_E_INVALIDHWND)
         CHK_ERRA(CLASSFACTORY_E_FIRST)
         CHK_ERRA(CLASSFACTORY_E_LAST)
         CHK_ERRA(CLASSFACTORY_S_FIRST)
         CHK_ERRA(CLASSFACTORY_S_LAST)
-//        CHK_ERRA(CLASS_E_NOAGGREGATION)
         CHK_ERRA(CLASS_E_CLASSNOTAVAILABLE)
         CHK_ERRA(CLASS_E_NOTLICENSED)
         CHK_ERRA(MARSHAL_E_FIRST)
@@ -192,12 +176,10 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(VIEW_E_LAST)
         CHK_ERRA(VIEW_S_FIRST)
         CHK_ERRA(VIEW_S_LAST)
-//        CHK_ERRA(VIEW_E_DRAW)
         CHK_ERRA(REGDB_E_FIRST)
         CHK_ERRA(REGDB_E_LAST)
         CHK_ERRA(REGDB_S_FIRST)
         CHK_ERRA(REGDB_S_LAST)
-//        CHK_ERRA(REGDB_E_READREGDB)
         CHK_ERRA(REGDB_E_WRITEREGDB)
         CHK_ERRA(REGDB_E_KEYMISSING)
         CHK_ERRA(REGDB_E_INVALIDVALUE)
@@ -205,11 +187,8 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(REGDB_E_IIDNOTREG)
         CHK_ERRA(CAT_E_FIRST)
         CHK_ERRA(CAT_E_LAST)
-//        CHK_ERRA(CAT_E_CATIDNOEXIST)
-//        CHK_ERRA(CAT_E_NODESCRIPTION)
         CHK_ERRA(CS_E_FIRST)
         CHK_ERRA(CS_E_LAST)
-//        CHK_ERRA(CS_E_PACKAGE_NOTFOUND)
         CHK_ERRA(CS_E_NOT_DELETABLE)
         CHK_ERRA(CS_E_CLASS_NOTFOUND)
         CHK_ERRA(CS_E_INVALID_VERSION)
@@ -220,17 +199,14 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(CS_E_NETWORK_ERROR)
         CHK_ERRA(CS_E_ADMIN_LIMIT_EXCEEDED)
         CHK_ERRA(CS_E_SCHEMA_MISMATCH)
-//        CHK_ERRA(CS_E_INTERNAL_ERROR)
         CHK_ERRA(CACHE_E_FIRST)
         CHK_ERRA(CACHE_E_LAST)
         CHK_ERRA(CACHE_S_FIRST)
         CHK_ERRA(CACHE_S_LAST)
-//        CHK_ERRA(CACHE_E_NOCACHE_UPDATED)
         CHK_ERRA(OLEOBJ_E_FIRST)
         CHK_ERRA(OLEOBJ_E_LAST)
         CHK_ERRA(OLEOBJ_S_FIRST)
         CHK_ERRA(OLEOBJ_S_LAST)
-//        CHK_ERRA(OLEOBJ_E_NOVERBS)
         CHK_ERRA(OLEOBJ_E_INVALIDVERB)
         CHK_ERRA(CLIENTSITE_E_FIRST)
         CHK_ERRA(CLIENTSITE_E_LAST)
@@ -238,7 +214,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(CLIENTSITE_S_LAST)
         CHK_ERRA(INPLACE_E_NOTUNDOABLE)
         CHK_ERRA(INPLACE_E_NOTOOLSPACE)
-//        CHK_ERRA(INPLACE_E_FIRST)
         CHK_ERRA(INPLACE_E_LAST)
         CHK_ERRA(INPLACE_S_FIRST)
         CHK_ERRA(INPLACE_S_LAST)
@@ -250,7 +225,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(CONVERT10_E_LAST)
         CHK_ERRA(CONVERT10_S_FIRST)
         CHK_ERRA(CONVERT10_S_LAST)
-//        CHK_ERRA(CONVERT10_E_OLESTREAM_GET)
         CHK_ERRA(CONVERT10_E_OLESTREAM_PUT)
         CHK_ERRA(CONVERT10_E_OLESTREAM_FMT)
         CHK_ERRA(CONVERT10_E_OLESTREAM_BITMAP_TO_DIB)
@@ -261,7 +235,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(CLIPBRD_E_LAST)
         CHK_ERRA(CLIPBRD_S_FIRST)
         CHK_ERRA(CLIPBRD_S_LAST)
-//        CHK_ERRA(CLIPBRD_E_CANT_OPEN)
         CHK_ERRA(CLIPBRD_E_CANT_EMPTY)
         CHK_ERRA(CLIPBRD_E_CANT_SET)
         CHK_ERRA(CLIPBRD_E_BAD_DATA)
@@ -270,7 +243,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(MK_E_LAST)
         CHK_ERRA(MK_S_FIRST)
         CHK_ERRA(MK_S_LAST)
-//        CHK_ERRA(MK_E_CONNECTMANUALLY)
         CHK_ERRA(MK_E_EXCEEDEDDEADLINE)
         CHK_ERRA(MK_E_NEEDGENERIC)
         CHK_ERRA(MK_E_UNAVAILABLE)
@@ -285,7 +257,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(MK_E_NOINVERSE)
         CHK_ERRA(MK_E_NOSTORAGE)
         CHK_ERRA(MK_E_NOPREFIX)
-//        CHK_ERRA(MK_E_ENUMERATION_FAILED)
         CHK_ERRA(CO_E_NOTINITIALIZED)
         CHK_ERRA(CO_E_ALREADYINITIALIZED)
         CHK_ERRA(CO_E_CANTDETERMINECLASS)
@@ -302,22 +273,14 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(CO_E_OBJNOTCONNECTED)
         CHK_ERRA(CO_E_APPDIDNTREG)
         CHK_ERRA(CO_E_RELEASED)
-//        CHK_ERRA(OLE_S_USEREG)
         CHK_ERRA(OLE_S_STATIC)
         CHK_ERRA(OLE_S_MAC_CLIPFORMAT)
-//        CHK_ERRA(DRAGDROP_S_DROP)
         CHK_ERRA(DRAGDROP_S_CANCEL)
         CHK_ERRA(DRAGDROP_S_USEDEFAULTCURSORS)
-//        CHK_ERRA(DATA_S_SAMEFORMATETC)
-//        CHK_ERRA(VIEW_S_ALREADY_FROZEN)
-//        CHK_ERRA(CACHE_S_FORMATETC_NOTSUPPORTED)
         CHK_ERRA(CACHE_S_SAMECACHE)
         CHK_ERRA(CACHE_S_SOMECACHES_NOTUPDATED)
-//        CHK_ERRA(OLEOBJ_S_INVALIDVERB)
         CHK_ERRA(OLEOBJ_S_CANNOT_DOVERB_NOW)
         CHK_ERRA(OLEOBJ_S_INVALIDHWND)
-//        CHK_ERRA(INPLACE_S_TRUNCATED)
-//        CHK_ERRA(CONVERT10_S_NO_PRESENTATION)
         CHK_ERRA(MK_S_REDUCED_TO_SELF)
         CHK_ERRA(MK_S_ME)
         CHK_ERRA(MK_S_HIM)
@@ -654,7 +617,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(TRUST_E_BAD_DIGEST)
         CHK_ERRA(TRUST_E_BASIC_CONSTRAINTS)
         CHK_ERRA(TRUST_E_FINANCIAL_CRITERIA)
-//        CHK_ERRA(NTE_OP_OK)
         CHK_ERRA(TRUST_E_PROVIDER_UNKNOWN)
         CHK_ERRA(TRUST_E_ACTION_UNKNOWN)
         CHK_ERRA(TRUST_E_SUBJECT_FORM_UNKNOWN)
@@ -741,7 +703,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(SPAPI_E_NO_CATALOG_FOR_OEM_INF)
         CHK_ERRA(SPAPI_E_DEVINSTALL_QUEUE_NONNATIVE)
         CHK_ERRA(SPAPI_E_ERROR_NOT_INSTALLED)
-//        CHK_ERRA(SCARD_S_SUCCESS)
         CHK_ERRA(SCARD_F_INTERNAL_ERROR)
         CHK_ERRA(SCARD_E_CANCELLED)
         CHK_ERRA(SCARD_E_INVALID_HANDLE)
@@ -1698,7 +1659,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERR_WIN32A(FRS_ERR_SYSVOL_IS_BUSY)
         CHK_ERR_WIN32A(FRS_ERR_SYSVOL_DEMOTE)
         CHK_ERR_WIN32A(FRS_ERR_INVALID_SERVICE_PARAMETER)
-//        CHK_ERR_WIN32A(DS_S_SUCCESS)
         CHK_ERR_WIN32A(ERROR_DS_NOT_INSTALLED)
         CHK_ERR_WIN32A(ERROR_DS_MEMBERSHIP_EVALUATED_LOCALLY)
         CHK_ERR_WIN32A(ERROR_DS_NO_ATTRIBUTE_OR_VALUE)
@@ -1935,7 +1895,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERR_WIN32A(ERROR_DS_WRONG_OM_OBJ_CLASS)
         CHK_ERR_WIN32A(ERROR_DS_DRA_REPL_PENDING)
         CHK_ERR_WIN32A(DNS_ERROR_RESPONSE_CODES_BASE)
-//        CHK_ERR_WIN32A(DNS_ERROR_MASK)
         CHK_ERR_WIN32A(DNS_ERROR_RCODE_FORMAT_ERROR)
         CHK_ERR_WIN32A(DNS_ERROR_RCODE_SERVER_FAILURE)
         CHK_ERR_WIN32A(DNS_ERROR_RCODE_NAME_ERROR)
@@ -2107,27 +2066,7 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(CO_E_SXS_CONFIG)
         CHK_ERRA(CO_E_MALFORMED_SPN)
         CHK_ERRA(REGDB_E_BADTHREADINGMODEL)
-//        CHK_ERRA(EVENT_E_FIRST)
-//        CHK_ERRA(EVENT_E_LAST)
-//        CHK_ERRA(EVENT_S_FIRST)
-//        CHK_ERRA(EVENT_S_LAST)
-//        CHK_ERRA(EVENT_S_SOME_SUBSCRIBERS_FAILED)
-//        CHK_ERRA(EVENT_E_ALL_SUBSCRIBERS_FAILED)
         CHK_ERRA(EVENT_S_NOSUBSCRIBERS)
-//        CHK_ERRA(EVENT_E_QUERYSYNTAX)
-//        CHK_ERRA(EVENT_E_QUERYFIELD)
-//        CHK_ERRA(EVENT_E_INTERNALEXCEPTION)
-//        CHK_ERRA(EVENT_E_INTERNALERROR)
-//        CHK_ERRA(EVENT_E_INVALID_PER_USER_SID)
-//        CHK_ERRA(EVENT_E_USER_EXCEPTION)
-//        CHK_ERRA(EVENT_E_TOO_MANY_METHODS)
-//        CHK_ERRA(EVENT_E_MISSING_EVENTCLASS)
-//        CHK_ERRA(EVENT_E_NOT_ALL_REMOVED)
-//        CHK_ERRA(EVENT_E_COMPLUS_NOT_INSTALLED)
-//        CHK_ERRA(EVENT_E_CANT_MODIFY_OR_DELETE_UNCONFIGURED_OBJECT)
-//        CHK_ERRA(EVENT_E_CANT_MODIFY_OR_DELETE_CONFIGURED_OBJECT)
-//        CHK_ERRA(EVENT_E_INVALID_EVENT_CLASS_PARTITION)
-//        CHK_ERRA(EVENT_E_PER_USER_SID_NOT_LOGGED_ON)
         CHK_ERRA(CONTEXT_E_FIRST)
         CHK_ERRA(CONTEXT_E_LAST)
         CHK_ERRA(CONTEXT_S_FIRST)
@@ -2135,7 +2074,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(CONTEXT_E_ABORTED)
         CHK_ERRA(CONTEXT_E_ABORTING)
         CHK_ERRA(CONTEXT_E_NOCONTEXT)
-//        CHK_ERRA(CONTEXT_E_WOULD_DEADLOCK)
         CHK_ERRA(CONTEXT_E_SYNCH_TIMEOUT)
         CHK_ERRA(CONTEXT_E_OLDREF)
         CHK_ERRA(CONTEXT_E_ROLENOTFOUND)
@@ -2154,7 +2092,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(CO_E_NOTPOOLED)
         CHK_ERRA(CO_E_NOTCONSTRUCTED)
         CHK_ERRA(CO_E_NOSYNCHRONIZATION)
-//        CHK_ERRA(CO_E_ISOLEVELMISMATCH)
         CHK_ERRA(SCHED_S_TASK_READY)
         CHK_ERRA(SCHED_S_TASK_RUNNING)
         CHK_ERRA(SCHED_S_TASK_DISABLED)
@@ -2252,15 +2189,11 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(SEC_E_BAD_BINDINGS)
         CHK_ERRA(SEC_E_MULTIPLE_ACCOUNTS)
         CHK_ERRA(SEC_E_NO_KERB_KEY)
-//        CHK_ERRA(SEC_E_CERT_WRONG_USAGE)
-//        CHK_ERRA(SEC_E_DOWNGRADE_DETECTED)
         CHK_ERRA(SEC_E_SMARTCARD_CERT_REVOKED)
         CHK_ERRA(SEC_E_ISSUING_CA_UNTRUSTED)
         CHK_ERRA(SEC_E_REVOCATION_OFFLINE_C)
         CHK_ERRA(SEC_E_PKINIT_CLIENT_FAILURE)
         CHK_ERRA(SEC_E_SMARTCARD_CERT_EXPIRED)
-//        CHK_ERRA(SEC_E_NO_SPM)
-//        CHK_ERRA(SEC_E_NOT_SUPPORTED)
         CHK_ERRA(CRYPT_I_NEW_PROTECTION_REQUIRED)
         CHK_ERRA(CRYPT_E_MISSING_PUBKEY_PARA)
         CHK_ERRA(CRYPT_E_ASN1_ERROR)
@@ -2295,7 +2228,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(CERTSRV_E_ALIGNMENT_FAULT)
         CHK_ERRA(CERTSRV_E_ENROLL_DENIED)
         CHK_ERRA(CERTSRV_E_TEMPLATE_DENIED)
-//        CHK_ERRA(CERTSRV_E_DOWNLEVEL_DC_SSL_OR_UPGRADE)
         CHK_ERRA(CERTSRV_E_TEMPLATE_CONFLICT)
         CHK_ERRA(CERTSRV_E_SUBJECT_ALT_NAME_REQUIRED)
         CHK_ERRA(CERTSRV_E_ARCHIVED_KEY_REQUIRED)
@@ -2312,9 +2244,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(CERTSRV_E_SUBJECT_DNS_REQUIRED)
         CHK_ERRA(CERTSRV_E_ARCHIVED_KEY_UNEXPECTED)
         CHK_ERRA(CERTSRV_E_KEY_LENGTH)
-//        CHK_ERRA(CERTSRV_E_SUBJECT_EMAIL_REQUIRED)
-//        CHK_ERRA(CERTSRV_E_UNKNOWN_CERT_TYPE)
-//        CHK_ERRA(CERTSRV_E_CERT_TYPE_OVERLAP)
         CHK_ERRA(XENROLL_E_KEY_NOT_EXPORTABLE)
         CHK_ERRA(XENROLL_E_CANNOT_ADD_ROOT_CERT)
         CHK_ERRA(XENROLL_E_RESPONSE_KA_HASH_NOT_FOUND)
@@ -2469,12 +2398,8 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(COMADMIN_E_PRIVATE_ACCESSDENIED)
         CHK_ERRA(COMADMIN_E_SAFERINVALID)
         CHK_ERRA(COMADMIN_E_REGISTRY_ACCESSDENIED)
-//        CHK_ERRA(COMADMIN_E_PARTITIONS_DISABLED)
-//        CHK_ERR_WIN32A(ERROR_EXE_CANNOT_MODIFY_SIGNED_BINARY)
-//        CHK_ERR_WIN32A(ERROR_EXE_CANNOT_MODIFY_STRONG_SIGNED_BINARY)
         CHK_ERR_WIN32A(ERROR_DISK_TOO_FRAGMENTED)
         CHK_ERR_WIN32A(ERROR_DELETE_PENDING)
-//        CHK_ERR_WIN32A(ERROR_SCOPE_NOT_FOUND)
         CHK_ERR_WIN32A(ERROR_NOT_SAFEBOOT_SERVICE)
         CHK_ERR_WIN32A(ERROR_JOURNAL_ENTRY_DELETED)
         CHK_ERR_WIN32A(ERROR_ONLY_IF_CONNECTED)
@@ -2497,15 +2422,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERR_WIN32A(ERROR_SYNC_FOREGROUND_REFRESH_REQUIRED)
         CHK_ERR_WIN32A(ERROR_DRIVER_BLOCKED)
         CHK_ERR_WIN32A(ERROR_INVALID_IMPORT_OF_NON_DLL)
-//        CHK_ERR_WIN32A(ERROR_ACCESS_DISABLED_WEBBLADE)
-//        CHK_ERR_WIN32A(ERROR_ACCESS_DISABLED_WEBBLADE_TAMPER)
-//        CHK_ERR_WIN32A(ERROR_RECOVERY_FAILURE)
-//        CHK_ERR_WIN32A(ERROR_ALREADY_FIBER)
-//        CHK_ERR_WIN32A(ERROR_ALREADY_THREAD)
-//        CHK_ERR_WIN32A(ERROR_STACK_BUFFER_OVERRUN)
-//        CHK_ERR_WIN32A(ERROR_PARAMETER_QUOTA_EXCEEDED)
-//        CHK_ERR_WIN32A(ERROR_DEBUGGER_INACTIVE)
-//        CHK_ERR_WIN32A(ERROR_DELAY_LOAD_FAILED)
         CHK_ERR_WIN32A(ERROR_CURRENT_DOMAIN_NOT_ALLOWED)
         CHK_ERR_WIN32A(ERROR_INSTALL_SERVICE_FAILURE)
         CHK_ERR_WIN32A(ERROR_INSTALL_PACKAGE_VERSION)
@@ -2536,7 +2452,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERR_WIN32A(ERROR_PATCH_TARGET_NOT_FOUND)
         CHK_ERR_WIN32A(ERROR_PATCH_PACKAGE_REJECTED)
         CHK_ERR_WIN32A(ERROR_INSTALL_TRANSFORM_REJECTED)
-//        CHK_ERR_WIN32A(ERROR_INSTALL_REMOTE_PROHIBITED)
         CHK_ERR_WIN32A(RPC_S_ENTRY_TYPE_MISMATCH)
         CHK_ERR_WIN32A(RPC_S_NOT_ALL_OBJS_EXPORTED)
         CHK_ERR_WIN32A(RPC_S_INTERFACE_NOT_EXPORTED)
@@ -2547,9 +2462,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERR_WIN32A(RPC_S_GRP_ELT_NOT_REMOVED)
         CHK_ERR_WIN32A(ERROR_KM_DRIVER_BLOCKED)
         CHK_ERR_WIN32A(ERROR_CONTEXT_EXPIRED)
-//        CHK_ERR_WIN32A(ERROR_PER_USER_TRUST_QUOTA_EXCEEDED)
-//        CHK_ERR_WIN32A(ERROR_ALL_USER_TRUST_QUOTA_EXCEEDED)
-//        CHK_ERR_WIN32A(ERROR_USER_DELETE_TRUST_QUOTA_EXCEEDED)
         CHK_ERR_WIN32A(ERROR_CONNECTED_OTHER_PASSWORD_DEFAULT)
         CHK_ERR_WIN32A(ERROR_PRINTER_DRIVER_WARNED)
         CHK_ERR_WIN32A(ERROR_PRINTER_DRIVER_BLOCKED)
@@ -2626,11 +2538,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERR_WIN32A(ERROR_NODE_CANNOT_BE_CLUSTERED)
         CHK_ERR_WIN32A(ERROR_CLUSTER_WRONG_OS_VERSION)
         CHK_ERR_WIN32A(ERROR_CLUSTER_CANT_CREATE_DUP_CLUSTER_NAME)
-//        CHK_ERR_WIN32A(ERROR_CLUSCFG_ALREADY_COMMITTED)
-//        CHK_ERR_WIN32A(ERROR_CLUSCFG_ROLLBACK_FAILED)
-//        CHK_ERR_WIN32A(ERROR_CLUSCFG_SYSTEM_DISK_DRIVE_LETTER_CONFLICT)
-//        CHK_ERR_WIN32A(ERROR_CLUSTER_OLD_VERSION)
-//        CHK_ERR_WIN32A(ERROR_CLUSTER_MISMATCHED_COMPUTER_ACCT_NAME)
         CHK_ERR_WIN32A(ERROR_FILE_READ_ONLY)
         CHK_ERR_WIN32A(ERROR_DIR_EFS_DISALLOWED)
         CHK_ERR_WIN32A(ERROR_EFS_SERVER_NOT_TRUSTED)
@@ -2647,7 +2554,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERR_WIN32A(ERROR_CTX_LICENSE_EXPIRED)
         CHK_ERR_WIN32A(ERROR_CTX_SHADOW_NOT_RUNNING)
         CHK_ERR_WIN32A(ERROR_CTX_SHADOW_ENDED_BY_MODE_CHANGE)
-//        CHK_ERR_WIN32A(ERROR_ACTIVATION_COUNT_EXCEEDED)
         CHK_ERR_WIN32A(ERROR_DS_SORT_CONTROL_MISSING)
         CHK_ERR_WIN32A(ERROR_DS_OFFSET_RANGE_ERROR)
         CHK_ERR_WIN32A(ERROR_DS_OBJECT_BEING_REMOVED)
@@ -2775,24 +2681,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERR_WIN32A(ERROR_DS_AUTHORIZATION_FAILED)
         CHK_ERR_WIN32A(ERROR_DS_INVALID_SCRIPT)
         CHK_ERR_WIN32A(ERROR_DS_REMOTE_CROSSREF_OP_FAILED)
-//        CHK_ERR_WIN32A(ERROR_DS_CROSS_REF_BUSY)
-//        CHK_ERR_WIN32A(ERROR_DS_CANT_DERIVE_SPN_FOR_DELETED_DOMAIN)
-//        CHK_ERR_WIN32A(ERROR_DS_CANT_DEMOTE_WITH_WRITEABLE_NC)
-//        CHK_ERR_WIN32A(ERROR_DS_DUPLICATE_ID_FOUND)
-//        CHK_ERR_WIN32A(ERROR_DS_INSUFFICIENT_ATTR_TO_CREATE_OBJECT)
-//        CHK_ERR_WIN32A(ERROR_DS_GROUP_CONVERSION_ERROR)
-//        CHK_ERR_WIN32A(ERROR_DS_CANT_MOVE_APP_BASIC_GROUP)
-//        CHK_ERR_WIN32A(ERROR_DS_CANT_MOVE_APP_QUERY_GROUP)
-//        CHK_ERR_WIN32A(ERROR_DS_ROLE_NOT_VERIFIED)
-//        CHK_ERR_WIN32A(ERROR_DS_WKO_CONTAINER_CANNOT_BE_SPECIAL)
-//        CHK_ERR_WIN32A(ERROR_DS_DOMAIN_RENAME_IN_PROGRESS)
-//        CHK_ERR_WIN32A(ERROR_DS_EXISTING_AD_CHILD_NC)
-//        CHK_ERR_WIN32A(DNS_ERROR_INVALID_NAME_CHAR)
-//        CHK_ERR_WIN32A(DNS_ERROR_NUMERIC_NAME)
-//        CHK_ERR_WIN32A(DNS_ERROR_NOT_ALLOWED_ON_ROOT_SERVER)
-//        CHK_ERR_WIN32A(DNS_ERROR_NOT_ALLOWED_UNDER_DELEGATION)
-//        CHK_ERR_WIN32A(DNS_ERROR_CANNOT_FIND_ROOT_HINTS)
-//        CHK_ERR_WIN32A(DNS_ERROR_INCONSISTENT_ROOT_HINTS)
         CHK_ERR_WIN32A(DNS_ERROR_FORWARDER_ALREADY_EXISTS)
         CHK_ERR_WIN32A(DNS_ERROR_ZONE_REQUIRES_MASTER_IP)
         CHK_ERR_WIN32A(DNS_ERROR_ZONE_IS_SHUTDOWN)
@@ -2801,7 +2689,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERR_WIN32A(DNS_ERROR_DP_ALREADY_EXISTS)
         CHK_ERR_WIN32A(DNS_ERROR_DP_NOT_ENLISTED)
         CHK_ERR_WIN32A(DNS_ERROR_DP_ALREADY_ENLISTED)
-//        CHK_ERR_WIN32A(DNS_ERROR_DP_NOT_AVAILABLE)
         CHK_ERR_WIN32A(WSA_QOS_ESERVICETYPE)
         CHK_ERR_WIN32A(WSA_QOS_EFLOWSPEC)
         CHK_ERR_WIN32A(WSA_QOS_EPROVSPECBUF)
@@ -2923,8 +2810,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERR_WIN32A(ERROR_IPSEC_MM_POLICY_PENDING_DELETION)
         CHK_ERR_WIN32A(ERROR_IPSEC_MM_AUTH_PENDING_DELETION)
         CHK_ERR_WIN32A(ERROR_IPSEC_QM_POLICY_PENDING_DELETION)
-//        CHK_ERR_WIN32A(WARNING_IPSEC_MM_POLICY_PRUNED)
-//        CHK_ERR_WIN32A(WARNING_IPSEC_QM_POLICY_PRUNED)
         CHK_ERR_WIN32A(ERROR_IPSEC_IKE_NEG_STATUS_BEGIN)
         CHK_ERR_WIN32A(ERROR_IPSEC_IKE_AUTH_FAIL)
         CHK_ERR_WIN32A(ERROR_IPSEC_IKE_ATTRIB_FAIL)
@@ -3007,9 +2892,7 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERR_WIN32A(ERROR_IPSEC_IKE_MM_LIMIT)
         CHK_ERR_WIN32A(ERROR_IPSEC_IKE_NEGOTIATION_DISABLED)
         CHK_ERR_WIN32A(ERROR_IPSEC_IKE_NEG_STATUS_END)
-
 #if !defined(WINAPI_FAMILY) || (WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP)
-
 // -------------------------------------------------------------
 // ddraw.h error codes
 // -------------------------------------------------------------
@@ -3018,14 +2901,12 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(DDERR_CANNOTDETACHSURFACE)
         CHK_ERRA(DDERR_CURRENTLYNOTAVAIL)
         CHK_ERRA(DDERR_EXCEPTION)
-//      CHK_ERRA(DDERR_GENERIC)
         CHK_ERRA(DDERR_HEIGHTALIGN)
         CHK_ERRA(DDERR_INCOMPATIBLEPRIMARY)
         CHK_ERRA(DDERR_INVALIDCAPS)
         CHK_ERRA(DDERR_INVALIDCLIPLIST)
         CHK_ERRA(DDERR_INVALIDMODE)
         CHK_ERRA(DDERR_INVALIDOBJECT)
-//        CHK_ERRA(DDERR_INVALIDPARAMS)
         CHK_ERRA(DDERR_INVALIDPIXELFORMAT)
         CHK_ERRA(DDERR_INVALIDRECT)
         CHK_ERRA(DDERR_LOCKEDSURFACES)
@@ -3057,8 +2938,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(DDERR_NOZBUFFERHW)
         CHK_ERRA(DDERR_NOZOVERLAYHW)
         CHK_ERRA(DDERR_OUTOFCAPS)
-//        CHK_ERRA(DDERR_OUTOFMEMORY)
-//        CHK_ERRA(DDERR_OUTOFVIDEOMEMORY)
         CHK_ERRA(DDERR_OVERLAYCANTCLIP)
         CHK_ERRA(DDERR_OVERLAYCOLORKEYONLYONEACTIVE)
         CHK_ERRA(DDERR_PALETTEBUSY)
@@ -3073,7 +2952,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(DDERR_TOOBIGHEIGHT)
         CHK_ERRA(DDERR_TOOBIGSIZE)
         CHK_ERRA(DDERR_TOOBIGWIDTH)
-//        CHK_ERRA(DDERR_UNSUPPORTED)
         CHK_ERRA(DDERR_UNSUPPORTEDFORMAT)
         CHK_ERRA(DDERR_UNSUPPORTEDMASK)
         CHK_ERRA(DDERR_INVALIDSTREAM)
@@ -3131,23 +3009,9 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(DDERR_NOMONITORINFORMATION)
         CHK_ERRA(DDERR_NODRIVERSUPPORT)
         CHK_ERRA(DDERR_DEVICEDOESNTOWNSURFACE)
-
 // -------------------------------------------------------------
 // dinput.h error codes
 // -------------------------------------------------------------
-//      CHK_ERRA(DI_OK)
-//      CHK_ERRA(DI_NOTATTACHED)
-//      CHK_ERRA(DI_BUFFEROVERFLOW)
-//      CHK_ERRA(DI_PROPNOEFFECT)
-//      CHK_ERRA(DI_NOEFFECT)
-//      CHK_ERRA(DI_POLLEDDEVICE)
-//      CHK_ERRA(DI_DOWNLOADSKIPPED)
-//      CHK_ERRA(DI_EFFECTRESTARTED)
-//      CHK_ERRA(DI_SETTINGSNOTSAVED_ACCESSDENIED)
-//      CHK_ERRA(DI_SETTINGSNOTSAVED_DISKFULL)
-//      CHK_ERRA(DI_TRUNCATED)
-//      CHK_ERRA(DI_TRUNCATEDANDRESTARTED)
-//      CHK_ERRA(DI_WRITEPROTECT)
         CHK_ERR(DIERR_INSUFFICIENTPRIVS, "DIERR_INSUFFICIENTPRIVS & VFW_E_INVALIDMEDIATYPE")
         CHK_ERR(DIERR_DEVICEFULL, "DIERR_DEVICEFULL & VFW_E_INVALIDSUBTYPE & DMO_E_INVALIDSTREAMINDEX")
         CHK_ERR(DIERR_MOREDATA, "DIERR_MOREDATA & VFW_E_NEED_OWNER & DMO_E_INVALIDTYPE")
@@ -3160,34 +3024,9 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERR(DIERR_UNPLUGGED, "DIERR_UNPLUGGED & VFW_E_NOT_CONNECTED")
         CHK_ERR(DIERR_REPORTFULL, "DIERR_REPORTFULL & VFW_E_NO_ALLOCATOR")
         CHK_ERR(DIERR_MAPFILEFAIL, "DIERR_MAPFILEFAIL & VFW_E_RUNTIME_ERROR")
-//      CHK_ERRA(DIERR_OLDDIRECTINPUTVERSION)
-//      CHK_ERRA(DIERR_GENERIC)
-//      CHK_ERRA(DIERR_OLDDIRECTINPUTVERSION)
-//      CHK_ERRA(DIERR_BETADIRECTINPUTVERSION)
-//      CHK_ERRA(DIERR_BADDRIVERVER)
-//      CHK_ERRA(DIERR_DEVICENOTREG)
-//      CHK_ERRA(DIERR_NOTFOUND)
-//      CHK_ERRA(DIERR_OBJECTNOTFOUND)
-//      CHK_ERRA(DIERR_INVALIDPARAM)
-//      CHK_ERRA(DIERR_NOINTERFACE)
-//      CHK_ERRA(DIERR_GENERIC)
-//      CHK_ERRA(DIERR_OUTOFMEMORY)
-//      CHK_ERRA(DIERR_UNSUPPORTED)
-//      CHK_ERRA(DIERR_NOTINITIALIZED)
-//      CHK_ERRA(DIERR_ALREADYINITIALIZED)
-//      CHK_ERRA(DIERR_NOAGGREGATION)
-//      CHK_ERRA(DIERR_OTHERAPPHASPRIO)
-//      CHK_ERRA(DIERR_INPUTLOST)
-//      CHK_ERRA(DIERR_ACQUIRED)
-//      CHK_ERRA(DIERR_NOTACQUIRED)
-//      CHK_ERRA(DIERR_READONLY)
-//      CHK_ERRA(DIERR_HANDLEEXISTS)
-
-
 // -------------------------------------------------------------
 // dinputd.h error
 // -------------------------------------------------------------
-//        CHK_ERRA(DIERR_NOMOREITEMS)
         CHK_ERRA(DIERR_DRIVERFIRST)
         CHK_ERR(DIERR_DRIVERFIRST+1, "DIERR_DRIVERFIRST+1")
         CHK_ERR(DIERR_DRIVERFIRST+2, "DIERR_DRIVERFIRST+2")
@@ -3202,7 +3041,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
 // -------------------------------------------------------------
 // d3d9.h error codes
 // -------------------------------------------------------------
-//      CHK_ERRA(D3D_OK)
         CHK_ERRA(D3DERR_WRONGTEXTUREFORMAT)
         CHK_ERRA(D3DERR_UNSUPPORTEDCOLOROPERATION)
         CHK_ERRA(D3DERR_UNSUPPORTEDCOLORARG)
@@ -3224,32 +3062,26 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(D3DERR_INVALIDDEVICE)
         CHK_ERRA(D3DERR_INVALIDCALL)
         CHK_ERRA(D3DERR_DRIVERINVALIDCALL)
-        //CHK_ERRA(D3DERR_WASSTILLDRAWING)
         CHK_ERRA(D3DOK_NOAUTOGEN)
-
-	    // Extended for Windows Vista
-	    CHK_ERRA(D3DERR_DEVICEREMOVED)
-	    CHK_ERRA(S_NOT_RESIDENT)
-	    CHK_ERRA(S_RESIDENT_IN_SHARED_MEMORY)
-	    CHK_ERRA(S_PRESENT_MODE_CHANGED)
-	    CHK_ERRA(S_PRESENT_OCCLUDED)
-	    CHK_ERRA(D3DERR_DEVICEHUNG)
-
+	      // Extended for Windows Vista
+	      CHK_ERRA(D3DERR_DEVICEREMOVED)
+	      CHK_ERRA(S_NOT_RESIDENT)
+	      CHK_ERRA(S_RESIDENT_IN_SHARED_MEMORY)
+	      CHK_ERRA(S_PRESENT_MODE_CHANGED)
+	      CHK_ERRA(S_PRESENT_OCCLUDED)
+	      CHK_ERRA(D3DERR_DEVICEHUNG)
         // Extended for Windows 7
         CHK_ERRA(D3DERR_UNSUPPORTEDOVERLAY)
         CHK_ERRA(D3DERR_UNSUPPORTEDOVERLAYFORMAT)
         CHK_ERRA(D3DERR_CANNOTPROTECTCONTENT)
         CHK_ERRA(D3DERR_UNSUPPORTEDCRYPTO)
         CHK_ERRA(D3DERR_PRESENT_STATISTICS_DISJOINT)
-
 #endif // !WINAPI_FAMILY || WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP
-
 // -------------------------------------------------------------
 // d3d10.h error codes
 // -------------------------------------------------------------
         CHK_ERRA(D3D10_ERROR_TOO_MANY_UNIQUE_STATE_OBJECTS)
         CHK_ERRA(D3D10_ERROR_FILE_NOT_FOUND)
-
 // -------------------------------------------------------------
 // dxgi.h error codes
 // -------------------------------------------------------------
@@ -3275,7 +3107,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(DXGI_ERROR_NOT_CURRENTLY_AVAILABLE)
         CHK_ERRA(DXGI_ERROR_REMOTE_CLIENT_DISCONNECTED)
         CHK_ERRA(DXGI_ERROR_REMOTE_OUTOFMEMORY)
-
 // -------------------------------------------------------------
 // d3d11.h error codes
 // -------------------------------------------------------------
@@ -3283,14 +3114,10 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(D3D11_ERROR_FILE_NOT_FOUND)
         CHK_ERRA(D3D11_ERROR_TOO_MANY_UNIQUE_VIEW_OBJECTS)
         CHK_ERRA(D3D11_ERROR_DEFERRED_CONTEXT_MAP_WITHOUT_INITIAL_DISCARD)
-
 #if !defined(WINAPI_FAMILY) || WINAPI_FAMILY != WINAPI_FAMILY_PHONE_APP
-
 // -------------------------------------------------------------
 // Direct2D error codes
 // -------------------------------------------------------------
-//        CHK_ERRA(D2DERR_UNSUPPORTED_PIXEL_FORMAT)
-//        CHK_ERRA(D2DERR_INSUFFICIENT_BUFFER)
         CHK_ERRA(D2DERR_WRONG_STATE)
         CHK_ERRA(D2DERR_NOT_INITIALIZED)
         CHK_ERRA(D2DERR_UNSUPPORTED_OPERATION)
@@ -3311,7 +3138,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(D2DERR_WRONG_FACTORY)
         CHK_ERRA(D2DERR_LAYER_ALREADY_IN_USE)
         CHK_ERRA(D2DERR_POP_CALL_DID_NOT_MATCH_PUSH)
-//        CHK_ERRA(D2DERR_WRONG_RESOURCE_DOMAIN)
         CHK_ERRA(D2DERR_PUSH_POP_UNBALANCED)
         CHK_ERRA(D2DERR_RENDER_TARGET_HAS_LAYER_OR_CLIPRECT)
         CHK_ERRA(D2DERR_INCOMPATIBLE_BRUSH_TYPES)
@@ -3319,8 +3145,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(D2DERR_TARGET_NOT_GDI_COMPATIBLE)
         CHK_ERRA(D2DERR_TEXT_EFFECT_IS_WRONG_TYPE)
         CHK_ERRA(D2DERR_TEXT_RENDERER_NOT_RELEASED)
-//        CHK_ERRA(D2DERR_EXCEEDS_MAX_BITMAP_SIZE)
-
 // -------------------------------------------------------------
 // DirectWrite error codes
 // -------------------------------------------------------------
@@ -3331,7 +3155,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(DWRITE_E_FILEACCESS)
         CHK_ERRA(DWRITE_E_FONTCOLLECTIONOBSOLETE)
         CHK_ERRA(DWRITE_E_ALREADYREGISTERED)
-
 // -------------------------------------------------------------
 // WIC error codes
 // -------------------------------------------------------------
@@ -3375,9 +3198,7 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(WINCODEC_ERR_INVALIDQUERYCHARACTER)
         CHK_ERRA(WINCODEC_ERR_WIN32ERROR)
         CHK_ERRA(WINCODEC_ERR_INVALIDPROGRESSIVELEVEL)
-
 #endif // !WINAPI_FAMILY || WINAPI_FAMILY != WINAPI_FAMILY_PHONE_APP
-
 // -------------------------------------------------------------
 // DXUT error codes
 // -------------------------------------------------------------
@@ -3391,7 +3212,6 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(DXUTERR_RESETTINGDEVICEOBJECTS)
         CHK_ERRA(DXUTERR_INCORRECTVERSION)
         CHK_ERRA(DXUTERR_DEVICEREMOVED)
-
 // -------------------------------------------------------------
 // xaudio2.h error codes
 // -------------------------------------------------------------
@@ -3399,55 +3219,37 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         CHK_ERRA(XAUDIO2_E_XMA_DECODER_ERROR)
         CHK_ERRA(XAUDIO2_E_XAPO_CREATION_FAILED)
         CHK_ERRA(XAUDIO2_E_DEVICE_INVALIDATED)
-
 // -------------------------------------------------------------
 // xapo.h error codes
 // -------------------------------------------------------------
         CHK_ERRA(XAPO_E_FORMAT_UNSUPPORTED)
-
         default: return L"Unknown error.";
     }
 }
-
 //--------------------------------------------------------------------------------------
 #undef CHK_ERR
 #undef CHK_ERRA
 #undef HRESULT_FROM_WIN32b
 #undef CHK_ERR_WIN32A
 #undef CHK_ERR_WIN32_ONLY
-
 #define  CHK_ERRA(hrchk) \
         case hrchk: \
              wcscpy_s( desc, count, L#hrchk ); break;
-
 #define  CHK_ERR(hrchk, strOut) \
         case hrchk: \
              wcscpy_s( desc, count, L##strOut ); break;
-
-
 //--------------------------------------------------------------------------------------
 void WINAPI DXGetErrorDescriptionW( _In_ HRESULT hr, _Out_cap_(count) WCHAR* desc, _In_ size_t count )
 {
     if ( !count )
         return;
-
     *desc = 0;
-
     // First try to see if FormatMessage knows this hr
     UINT icount = static_cast<UINT>( std::min<size_t>( count, 32767 ) );
-
-    DWORD result = FormatMessageW( FORMAT_MESSAGE_FROM_SYSTEM, nullptr, hr, 
-                                   MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), desc, icount, nullptr );
-
-    if (result > 0)
-        return;
-
-    switch (hr)
-    {
-// Commmented out codes are actually alises for other codes
-
+    DWORD result = FormatMessageW( FORMAT_MESSAGE_FROM_SYSTEM, nullptr, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), desc, icount, nullptr );
+    if (result > 0) return;
+    switch (hr){
 #if !defined(WINAPI_FAMILY) || (WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP)
-
 // -------------------------------------------------------------
 // ddraw.h error codes
 // -------------------------------------------------------------
@@ -3456,14 +3258,12 @@ void WINAPI DXGetErrorDescriptionW( _In_ HRESULT hr, _Out_cap_(count) WCHAR* des
         CHK_ERR(DDERR_CANNOTDETACHSURFACE, "This surface can not be detached from the requested surface.")
         CHK_ERR(DDERR_CURRENTLYNOTAVAIL, "Support is currently not available.")
         CHK_ERR(DDERR_EXCEPTION, "An exception was encountered while performing the requested operation")
-//      CHK_ERR(DDERR_GENERIC, "DDERR_GENERIC")
         CHK_ERR(DDERR_HEIGHTALIGN, "Height of rectangle provided is not a multiple of reqd alignment")
         CHK_ERR(DDERR_INCOMPATIBLEPRIMARY, "Unable to match primary surface creation request with existing primary surface.")
         CHK_ERR(DDERR_INVALIDCAPS, "One or more of the caps bits passed to the callback are incorrect.")
         CHK_ERR(DDERR_INVALIDCLIPLIST, "DirectDraw does not support provided Cliplist.")
         CHK_ERR(DDERR_INVALIDMODE, "DirectDraw does not support the requested mode")
         CHK_ERR(DDERR_INVALIDOBJECT, "DirectDraw received a pointer that was an invalid DIRECTDRAW object.")
-//        CHK_ERR(DDERR_INVALIDPARAMS, "DDERR_INVALIDPARAMS")
         CHK_ERR(DDERR_INVALIDPIXELFORMAT, "pixel format was invalid as specified")
         CHK_ERR(DDERR_INVALIDRECT, "Rectangle provided was invalid.")
         CHK_ERR(DDERR_LOCKEDSURFACES, "Operation could not be carried out because one or more surfaces are locked")
@@ -3495,8 +3295,6 @@ void WINAPI DXGetErrorDescriptionW( _In_ HRESULT hr, _Out_cap_(count) WCHAR* des
         CHK_ERR(DDERR_NOZBUFFERHW, "Operation could not be carried out because there is no hardware support for zbuffer blting.")
         CHK_ERR(DDERR_NOZOVERLAYHW, "Overlay surfaces could not be z layered based on their BltOrder because the hardware does not support z layering of overlays.")
         CHK_ERR(DDERR_OUTOFCAPS, "The hardware needed for the requested operation has already been allocated.")
-//        CHK_ERR(DDERR_OUTOFMEMORY, "DDERR_OUTOFMEMORY")
-//        CHK_ERR(DDERR_OUTOFVIDEOMEMORY, "DDERR_OUTOFVIDEOMEMORY")
         CHK_ERR(DDERR_OVERLAYCANTCLIP, "hardware does not support clipped overlays")
         CHK_ERR(DDERR_OVERLAYCOLORKEYONLYONEACTIVE, "Can only have ony color key active at one time for overlays")
         CHK_ERR(DDERR_PALETTEBUSY, "Access to this palette is being refused because the palette is already locked by another thread.")
@@ -3511,7 +3309,6 @@ void WINAPI DXGetErrorDescriptionW( _In_ HRESULT hr, _Out_cap_(count) WCHAR* des
         CHK_ERR(DDERR_TOOBIGHEIGHT, "Height requested by DirectDraw is too large.")
         CHK_ERR(DDERR_TOOBIGSIZE, "Size requested by DirectDraw is too large --  The individual height and width are OK.")
         CHK_ERR(DDERR_TOOBIGWIDTH, "Width requested by DirectDraw is too large.")
-//        CHK_ERR(DDERR_UNSUPPORTED, "DDERR_UNSUPPORTED")
         CHK_ERR(DDERR_UNSUPPORTEDFORMAT, "Pixel format requested is unsupported by DirectDraw")
         CHK_ERR(DDERR_UNSUPPORTEDMASK, "Bitmask in the pixel format requested is unsupported by DirectDraw")
         CHK_ERR(DDERR_INVALIDSTREAM, "The specified stream contains invalid data")
@@ -3569,46 +3366,17 @@ void WINAPI DXGetErrorDescriptionW( _In_ HRESULT hr, _Out_cap_(count) WCHAR* des
         CHK_ERR(DDERR_NOMONITORINFORMATION, "The monitor does not have EDID data.")
         CHK_ERR(DDERR_NODRIVERSUPPORT, "The driver does not enumerate display mode refresh rates.")
         CHK_ERR(DDERR_DEVICEDOESNTOWNSURFACE, "Surfaces created by one direct draw device cannot be used directly by another direct draw device.")
-
-
 // -------------------------------------------------------------
 // dinput.h error codes
 // -------------------------------------------------------------
-//      CHK_ERR(DI_OK, "DI_OK")
-//      CHK_ERR(DI_NOTATTACHED, "DI_NOTATTACHED")
-//      CHK_ERR(DI_BUFFEROVERFLOW, "DI_BUFFEROVERFLOW")
-//      CHK_ERR(DI_PROPNOEFFECT, "DI_PROPNOEFFECT")
-//      CHK_ERR(DI_NOEFFECT, "DI_NOEFFECT")
-//      CHK_ERR(DI_POLLEDDEVICE, "DI_POLLEDDEVICE")
-//      CHK_ERR(DI_DOWNLOADSKIPPED, "DI_DOWNLOADSKIPPED")
-//      CHK_ERR(DI_EFFECTRESTARTED, "DI_EFFECTRESTARTED")
-//      CHK_ERR(DI_SETTINGSNOTSAVED_ACCESSDENIED, "DI_SETTINGSNOTSAVED_ACCESSDENIED")
-//      CHK_ERR(DI_SETTINGSNOTSAVED_DISKFULL, "DI_SETTINGSNOTSAVED_DISKFULL")
-//      CHK_ERR(DI_TRUNCATED, "DI_TRUNCATED")
-//      CHK_ERR(DI_TRUNCATEDANDRESTARTED, "DI_TRUNCATEDANDRESTARTED")
-//      CHK_ERR(DI_WRITEPROTECT, "DI_WRITEPROTECT")
         CHK_ERR(DIERR_OLDDIRECTINPUTVERSION, "The application requires a newer version of DirectInput.")
-//      CHK_ERR(DIERR_GENERIC, "DIERR_GENERIC")
-//      CHK_ERR(DIERR_OLDDIRECTINPUTVERSION, "DIERR_OLDDIRECTINPUTVERSION")
         CHK_ERR(DIERR_BETADIRECTINPUTVERSION, "The application was written for an unsupported prerelease version of DirectInput.")
         CHK_ERR(DIERR_BADDRIVERVER, "The object could not be created due to an incompatible driver version or mismatched or incomplete driver components.")
-//      CHK_ERR(DIERR_DEVICENOTREG, "DIERR_DEVICENOTREG")
-//      CHK_ERR(DIERR_NOTFOUND, "The requested object does not exist.")
-//      CHK_ERR(DIERR_OBJECTNOTFOUND, "DIERR_OBJECTNOTFOUND")
-//      CHK_ERR(DIERR_INVALIDPARAM, "DIERR_INVALIDPARAM")
-//      CHK_ERR(DIERR_NOINTERFACE, "DIERR_NOINTERFACE")
-//      CHK_ERR(DIERR_GENERIC, "DIERR_GENERIC")
-//      CHK_ERR(DIERR_OUTOFMEMORY, "DIERR_OUTOFMEMORY")
-//      CHK_ERR(DIERR_UNSUPPORTED, "DIERR_UNSUPPORTED")
         CHK_ERR(DIERR_NOTINITIALIZED, "This object has not been initialized")
         CHK_ERR(DIERR_ALREADYINITIALIZED, "This object is already initialized")
-//      CHK_ERR(DIERR_NOAGGREGATION, "DIERR_NOAGGREGATION")
-//      CHK_ERR(DIERR_OTHERAPPHASPRIO, "DIERR_OTHERAPPHASPRIO")
         CHK_ERR(DIERR_INPUTLOST, "Access to the device has been lost.  It must be re-acquired.")
         CHK_ERR(DIERR_ACQUIRED, "The operation cannot be performed while the device is acquired.")
         CHK_ERR(DIERR_NOTACQUIRED, "The operation cannot be performed unless the device is acquired.")
-//      CHK_ERR(DIERR_READONLY, "DIERR_READONLY")
-//      CHK_ERR(DIERR_HANDLEEXISTS, "DIERR_HANDLEEXISTS")
         CHK_ERR(DIERR_INSUFFICIENTPRIVS, "Unable to IDirectInputJoyConfig_Acquire because the user does not have sufficient privileges to change the joystick configuration. & An invalid media type was specified")
         CHK_ERR(DIERR_DEVICEFULL, "The device is full. & An invalid media subtype was specified.")
         CHK_ERR(DIERR_MOREDATA, "Not all the requested information fit into the buffer. & This object can only be created as an aggregated object.")
@@ -3621,7 +3389,6 @@ void WINAPI DXGetErrorDescriptionW( _In_ HRESULT hr, _Out_cap_(count) WCHAR* des
         CHK_ERR(DIERR_UNPLUGGED, "The operation could not be completed because the device is not plugged in. & The operation cannot be performed because the pins are not connected.")
         CHK_ERR(DIERR_REPORTFULL, "SendDeviceData failed because more information was requested to be sent than can be sent to the device.  Some devices have restrictions on how much data can be sent to them.  (For example, there might be a limit on the number of buttons that can be pressed at once.) & No sample buffer allocator is available.")
         CHK_ERR(DIERR_MAPFILEFAIL, "A mapper file function failed because reading or writing the user or IHV settings file failed. & A run-time error occurred.")
-
 // -------------------------------------------------------------
 // dinputd.h error codes
 // -------------------------------------------------------------
@@ -3636,11 +3403,9 @@ void WINAPI DXGetErrorDescriptionW( _In_ HRESULT hr, _Out_cap_(count) WCHAR* des
         CHK_ERR(DIERR_INVALIDCLASSINSTALLER, "Registry entry or DLL for class installer invalid or class installer not found.")
         CHK_ERR(DIERR_CANCELLED, "The user cancelled the install operation. & The stream already has allocated samples and the surface doesn't match the sample format.")
         CHK_ERR(DIERR_BADINF, "The INF file for the selected device could not be found or is invalid or is damaged. & The specified purpose ID can't be used for the call.")
-
 // -------------------------------------------------------------
 // d3d9.h error codes
 // -------------------------------------------------------------
-//      CHK_ERR(D3D_OK, "Ok")
         CHK_ERR(D3DERR_WRONGTEXTUREFORMAT, "Wrong texture format")
         CHK_ERR(D3DERR_UNSUPPORTEDCOLOROPERATION, "Unsupported color operation")
         CHK_ERR(D3DERR_UNSUPPORTEDCOLORARG, "Unsupported color arg")
@@ -3662,33 +3427,26 @@ void WINAPI DXGetErrorDescriptionW( _In_ HRESULT hr, _Out_cap_(count) WCHAR* des
         CHK_ERR(D3DERR_INVALIDDEVICE, "Invalid device")
         CHK_ERR(D3DERR_INVALIDCALL, "Invalid call")
         CHK_ERR(D3DERR_DRIVERINVALIDCALL, "Driver invalid call")
-        //CHK_ERR(D3DERR_WASSTILLDRAWING, "Was Still Drawing")
         CHK_ERR(D3DOK_NOAUTOGEN, "The call succeeded but there won't be any mipmaps generated")
-
-	    // Extended for Windows Vista
-	    CHK_ERR(D3DERR_DEVICEREMOVED, "Hardware device was removed")
-	    CHK_ERR(S_NOT_RESIDENT, "Resource not resident in memory")
-	    CHK_ERR(S_RESIDENT_IN_SHARED_MEMORY, "Resource resident in shared memory")
-	    CHK_ERR(S_PRESENT_MODE_CHANGED, "Desktop display mode has changed")
-	    CHK_ERR(S_PRESENT_OCCLUDED, "Client window is occluded (minimized or other fullscreen)")
-	    CHK_ERR(D3DERR_DEVICEHUNG, "Hardware adapter reset by OS")
-
+	      // Extended for Windows Vista
+	      CHK_ERR(D3DERR_DEVICEREMOVED, "Hardware device was removed")
+	      CHK_ERR(S_NOT_RESIDENT, "Resource not resident in memory")
+	      CHK_ERR(S_RESIDENT_IN_SHARED_MEMORY, "Resource resident in shared memory")
+	      CHK_ERR(S_PRESENT_MODE_CHANGED, "Desktop display mode has changed")
+	      CHK_ERR(S_PRESENT_OCCLUDED, "Client window is occluded (minimized or other fullscreen)")
+	      CHK_ERR(D3DERR_DEVICEHUNG, "Hardware adapter reset by OS")
         // Extended for Windows 7
         CHK_ERR(D3DERR_UNSUPPORTEDOVERLAY, "Overlay is not supported" )
         CHK_ERR(D3DERR_UNSUPPORTEDOVERLAYFORMAT, "Overlay format is not supported" )
         CHK_ERR(D3DERR_CANNOTPROTECTCONTENT, "Contect protection not available" )
         CHK_ERR(D3DERR_UNSUPPORTEDCRYPTO, "Unsupported cryptographic system" )
         CHK_ERR(D3DERR_PRESENT_STATISTICS_DISJOINT, "Presentation statistics are disjoint" )
-
-
 #endif // !WINAPI_FAMILY || WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP
-
 // -------------------------------------------------------------
 // d3d10.h error codes
 // -------------------------------------------------------------
         CHK_ERR(D3D10_ERROR_TOO_MANY_UNIQUE_STATE_OBJECTS, "There are too many unique state objects.")
         CHK_ERR(D3D10_ERROR_FILE_NOT_FOUND, "File not found")
-
 // -------------------------------------------------------------
 // dxgi.h error codes
 // -------------------------------------------------------------
@@ -3714,7 +3472,6 @@ void WINAPI DXGetErrorDescriptionW( _In_ HRESULT hr, _Out_cap_(count) WCHAR* des
         CHK_ERR(DXGI_ERROR_NOT_CURRENTLY_AVAILABLE, "The requested functionality is not supported by the device or the driver.")
         CHK_ERR(DXGI_ERROR_REMOTE_CLIENT_DISCONNECTED, "Remote desktop client disconnected.")
         CHK_ERR(DXGI_ERROR_REMOTE_OUTOFMEMORY, "Remote desktop client is out of memory.")
-
 // -------------------------------------------------------------
 // d3d11.h error codes
 // -------------------------------------------------------------
@@ -3722,14 +3479,10 @@ void WINAPI DXGetErrorDescriptionW( _In_ HRESULT hr, _Out_cap_(count) WCHAR* des
         CHK_ERR(D3D11_ERROR_FILE_NOT_FOUND, "File not found")
         CHK_ERR(D3D11_ERROR_TOO_MANY_UNIQUE_VIEW_OBJECTS, "Therea are too many unique view objects.")
         CHK_ERR(D3D11_ERROR_DEFERRED_CONTEXT_MAP_WITHOUT_INITIAL_DISCARD, "Deferred context requires Map-Discard usage pattern")
-
 #if !defined(WINAPI_FAMILY) || WINAPI_FAMILY != WINAPI_FAMILY_PHONE_APP
-
 // -------------------------------------------------------------
 // Direct2D error codes
 // -------------------------------------------------------------
-//        CHK_ERR(D2DERR_UNSUPPORTED_PIXEL_FORMAT, "The pixel format is not supported.")
-//        CHK_ERR(D2DERR_INSUFFICIENT_BUFFER, "The supplied buffer was too small to accomodate the data.")
         CHK_ERR(D2DERR_WRONG_STATE, "The object was not in the correct state to process the method.")
         CHK_ERR(D2DERR_NOT_INITIALIZED, "The object has not yet been initialized.")
         CHK_ERR(D2DERR_UNSUPPORTED_OPERATION, "The requested opertion is not supported.")
@@ -3750,7 +3503,6 @@ void WINAPI DXGetErrorDescriptionW( _In_ HRESULT hr, _Out_cap_(count) WCHAR* des
         CHK_ERR(D2DERR_WRONG_FACTORY, "Objects used together must be created from the same factory instance.")
         CHK_ERR(D2DERR_LAYER_ALREADY_IN_USE, "A layer resource can only be in use once at any point in time.")
         CHK_ERR(D2DERR_POP_CALL_DID_NOT_MATCH_PUSH, "The pop call did not match the corresponding push call")
-//        CHK_ERR(D2DERR_WRONG_RESOURCE_DOMAIN, "The resource was realized on the wrong render target")
         CHK_ERR(D2DERR_PUSH_POP_UNBALANCED, "The push and pop calls were unbalanced")
         CHK_ERR(D2DERR_RENDER_TARGET_HAS_LAYER_OR_CLIPRECT, "Attempt to copy from a render target while a layer or clip rect is applied")
         CHK_ERR(D2DERR_INCOMPATIBLE_BRUSH_TYPES, "The brush types are incompatible for the call.")
@@ -3758,8 +3510,6 @@ void WINAPI DXGetErrorDescriptionW( _In_ HRESULT hr, _Out_cap_(count) WCHAR* des
         CHK_ERR(D2DERR_TARGET_NOT_GDI_COMPATIBLE, "The render target is not compatible with GDI")
         CHK_ERR(D2DERR_TEXT_EFFECT_IS_WRONG_TYPE, "A text client drawing effect object is of the wrong type")
         CHK_ERR(D2DERR_TEXT_RENDERER_NOT_RELEASED, "The application is holding a reference to the IDWriteTextRenderer interface after the corresponding DrawText or DrawTextLayout call has returned. The IDWriteTextRenderer instance will be zombied.")
-//        CHK_ERR(D2DERR_EXCEEDS_MAX_BITMAP_SIZE, "The requested size is larger than the guaranteed supported texture size.")
-
 // -------------------------------------------------------------
 // DirectWrite error codes
 // -------------------------------------------------------------
@@ -3770,7 +3520,6 @@ void WINAPI DXGetErrorDescriptionW( _In_ HRESULT hr, _Out_cap_(count) WCHAR* des
         CHK_ERR(DWRITE_E_FILEACCESS, "A font file exists but could not be opened due to access denied, sharing violation, or similar error.")
         CHK_ERR(DWRITE_E_FONTCOLLECTIONOBSOLETE, "A font collection is obsolete due to changes in the system.")
         CHK_ERR(DWRITE_E_ALREADYREGISTERED, "The given interface is already registered.")
-
 // -------------------------------------------------------------
 // WIC error codes
 // -------------------------------------------------------------
@@ -3814,9 +3563,7 @@ void WINAPI DXGetErrorDescriptionW( _In_ HRESULT hr, _Out_cap_(count) WCHAR* des
         CHK_ERR(WINCODEC_ERR_INVALIDQUERYCHARACTER, "Invalid character in WIC metadata query.")
         CHK_ERR(WINCODEC_ERR_WIN32ERROR, "General Win32 error encountered during WIC operation.")
         CHK_ERR(WINCODEC_ERR_INVALIDPROGRESSIVELEVEL, "Invalid level for progressive WIC image decode.")
-
 #endif // !WINAPI_FAMILY || WINAPI_FAMILY != WINAPI_FAMILY_PHONE_APP
-
 // -------------------------------------------------------------
 // DXUT error codes
 // -------------------------------------------------------------
@@ -3830,7 +3577,6 @@ void WINAPI DXGetErrorDescriptionW( _In_ HRESULT hr, _Out_cap_(count) WCHAR* des
         CHK_ERR(DXUTERR_RESETTINGDEVICEOBJECTS, "An error occurred in the device reset callback function.")
         CHK_ERR(DXUTERR_INCORRECTVERSION, "Incorrect version of Direct3D or D3DX.")
         CHK_ERR(DXUTERR_DEVICEREMOVED, "The device was removed.")
-
 // -------------------------------------------------------------
 // xaudio2.h error codes
 // -------------------------------------------------------------
@@ -3838,34 +3584,27 @@ void WINAPI DXGetErrorDescriptionW( _In_ HRESULT hr, _Out_cap_(count) WCHAR* des
         CHK_ERR(XAUDIO2_E_XMA_DECODER_ERROR, "Hardware XMA decoder error")
         CHK_ERR(XAUDIO2_E_XAPO_CREATION_FAILED, "Failed to create an audio effect")
         CHK_ERR(XAUDIO2_E_DEVICE_INVALIDATED, "Device invalidated (unplugged, disabled, etc)")
-
 // -------------------------------------------------------------
 // xapo.h error codes
 // -------------------------------------------------------------
         CHK_ERR(XAPO_E_FORMAT_UNSUPPORTED, "Requested audio format unsupported.")
-
         default: wcscpy_s( desc, count, L"Unknown error." ); break;
     }
 }
 
-//-----------------------------------------------------------------------------
-HRESULT WINAPI DXTraceW( _In_z_ const WCHAR* strFile, _In_ DWORD dwLine, _In_ HRESULT hr,
-                         _In_opt_ const WCHAR* strMsg, _In_ bool bPopMsgBox )
-{
+HRESULT WINAPI DXTraceW( _In_z_ const WCHAR* strFile, _In_ DWORD dwLine, _In_ HRESULT hr, _In_opt_ const WCHAR* strMsg, _In_ bool bPopMsgBox ){
     WCHAR strBufferLine[128];
     WCHAR strBufferError[256];
     WCHAR strBuffer[BUFFER_SIZE];
 
     swprintf_s( strBufferLine, 128, L"%lu", dwLine );
-    if( strFile )
-    {
+    if( strFile ){
        swprintf_s( strBuffer, BUFFER_SIZE, L"%ls(%ls): ", strFile, strBufferLine );
        OutputDebugStringW( strBuffer );
     }
 
     size_t nMsgLen = (strMsg) ? wcsnlen_s( strMsg, 1024 ) : 0;
-    if( nMsgLen > 0 )
-    {
+    if( nMsgLen > 0 ){
         OutputDebugStringW( strMsg );
         OutputDebugStringW( L" " );
     }
@@ -3873,25 +3612,19 @@ HRESULT WINAPI DXTraceW( _In_z_ const WCHAR* strFile, _In_ DWORD dwLine, _In_ HR
     swprintf_s( strBufferError, 256, L"%ls (0x%0.8x)", DXGetErrorStringW(hr), hr );
     swprintf_s( strBuffer, BUFFER_SIZE, L"hr=%ls", strBufferError );
     OutputDebugStringW( strBuffer );
-
     OutputDebugStringW( L"\n" );
 
 #if !defined(WINAPI_FAMILY) || (WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP)
-    if( bPopMsgBox )
-    {
+    if( bPopMsgBox ){
         WCHAR strBufferFile[MAX_PATH];
         wcscpy_s( strBufferFile, MAX_PATH, L"" );
         if( strFile )
             wcscpy_s( strBufferFile, MAX_PATH, strFile );
-
         WCHAR strBufferMsg[1024];
         wcscpy_s( strBufferMsg, 1024, L"" );
         if( nMsgLen > 0 )
             swprintf_s( strBufferMsg, 1024, L"Calling: %ls\n", strMsg );
-
-        swprintf_s( strBuffer, BUFFER_SIZE, L"File: %ls\nLine: %ls\nError Code: %ls\n%lsDo you want to debug the application?",
-                    strBufferFile, strBufferLine, strBufferError, strBufferMsg );
-
+        swprintf_s( strBuffer, BUFFER_SIZE, L"File: %ls\nLine: %ls\nError Code: %ls\n%lsDo you want to debug the application?", strBufferFile, strBufferLine, strBufferError, strBufferMsg );
         int nResult = MessageBoxW( GetForegroundWindow(), strBuffer, L"Unexpected error encountered", MB_YESNO | MB_ICONERROR );
         if( nResult == IDYES )
             DebugBreak();
@@ -3899,6 +3632,5 @@ HRESULT WINAPI DXTraceW( _In_z_ const WCHAR* strFile, _In_ DWORD dwLine, _In_ HR
 #else
     UNREFERENCED_PARAMETER(bPopMsgBox);
 #endif
-
     return hr;
 }

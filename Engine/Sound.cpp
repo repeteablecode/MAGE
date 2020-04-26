@@ -20,51 +20,37 @@
 #define SOUND_API_EXCEPTION( hr,note ) SoundSystem::APIException( hr,_CRT_WIDE(__FILE__),__LINE__,note )
 #define SOUND_FILE_EXCEPTION( filename,note ) SoundSystem::FileException( _CRT_WIDE(__FILE__),__LINE__,note,filename )
 
-SoundSystem& SoundSystem::Get()
-{
+SoundSystem& SoundSystem::Get(){
 	static SoundSystem instance;
 	return instance;
 }
 
- void SoundSystem::SetMasterVolume( float vol )
- {
+ void SoundSystem::SetMasterVolume( float vol ) {
 	 HRESULT hr;
-	 if( FAILED( hr = Get().pMaster->SetVolume( vol ) ) )
-	 {
+	 if( FAILED( hr = Get().pMaster->SetVolume( vol ) ) ) {
 		throw SOUND_API_EXCEPTION( hr,L"Setting master volume" );
 	 }
  }
 
-const WAVEFORMATEX& SoundSystem::GetFormat()
-{
-	return *Get().format;
-}
+const WAVEFORMATEX& SoundSystem::GetFormat(){ return *Get().format; }
 
-void SoundSystem::PlaySoundBuffer( Sound & s,float freqMod,float vol )
-{
+void SoundSystem::PlaySoundBuffer( Sound & s,float freqMod,float vol ){
 	std::lock_guard<std::mutex> lock( mutex );
-	if( idleChannelPtrs.size() > 0 )
-	{
+	if( idleChannelPtrs.size() > 0 ){
 		activeChannelPtrs.push_back( std::move( idleChannelPtrs.back() ) );
 		idleChannelPtrs.pop_back();
 		activeChannelPtrs.back()->PlaySoundBuffer( s,freqMod,vol );
 	}
 }
 
-SoundSystem::XAudioDll::XAudioDll()
-{
+SoundSystem::XAudioDll::XAudioDll(){
 	LoadType type = LoadType::System;
-	while( true )
-	{
+	while( true ){
 		hModule = LoadLibrary( GetDllPath( type ) );
-		if( hModule != 0 )
-		{
+		if( hModule != 0 ){
 			return;
-		}
-		else
-		{
-			switch( type )
-			{
+		}	else{
+			switch( type ){
 			case LoadType::System:
 				type = LoadType::Folder;
 				break;
@@ -89,24 +75,17 @@ SoundSystem::XAudioDll::XAudioDll()
 	}
 }
 
-SoundSystem::XAudioDll::~XAudioDll()
-{
-	if( hModule != 0 )
-	{
+SoundSystem::XAudioDll::~XAudioDll(){
+	if( hModule != 0 ){
 		FreeLibrary( hModule );
 		hModule = 0;
 	}
 }
 
-SoundSystem::XAudioDll::operator HMODULE() const
-{
-	return hModule;
-}
+SoundSystem::XAudioDll::operator HMODULE() const{ return hModule; }
 
-const wchar_t* SoundSystem::XAudioDll::GetDllPath( LoadType type )
-{
-	switch( type )
-	{
+const wchar_t* SoundSystem::XAudioDll::GetDllPath( LoadType type ){
+	switch( type ){
 	case LoadType::System:
 		return systemPath;
 	case LoadType::Folder:
@@ -119,10 +98,7 @@ const wchar_t* SoundSystem::XAudioDll::GetDllPath( LoadType type )
 	}
 }
 
-SoundSystem::SoundSystem()
-	:
-	format( std::make_unique<WAVEFORMATEX>() )
-{
+SoundSystem::SoundSystem() : format( std::make_unique<WAVEFORMATEX>() ){
 	// setup wave format info structure
 	static_assert(nChannelsPerSound > 0u,"WAVE File Format Error: At least one channel required per audio stream");
 	static_assert(nChannelsPerSound <= XAUDIO2_MAX_AUDIO_CHANNELS,"WAVE File Format Error: Maximum audio channels per audio stream exceeded");
@@ -142,8 +118,7 @@ SoundSystem::SoundSystem()
 	const std::function<HRESULT(REFCLSID,REFIID,LPVOID)> DllGetClassObject =
         reinterpret_cast<HRESULT(WINAPI*)(REFCLSID,REFIID,LPVOID)>( 
 		GetProcAddress( xaudio_dll,"DllGetClassObject" ) );
-	if( !DllGetClassObject )
-	{		
+	if( !DllGetClassObject ){		
 		throw SOUND_API_EXCEPTION( 
 			HRESULT_FROM_WIN32( GetLastError() ),
 			L"Getting process address of 'DllGetClassObject' function" );
@@ -155,64 +130,39 @@ SoundSystem::SoundSystem()
 	if( FAILED( hr = DllGetClassObject( 
 		 __uuidof( XAudio2 ),
 		IID_IClassFactory,
-		pClassFactory.ReleaseAndGetAddressOf() ) ) )
-	{
+		pClassFactory.ReleaseAndGetAddressOf() ) ) ){
 		throw SOUND_API_EXCEPTION( hr,L"Creating factory for XAudio2 object" );
 	}
 
 	// create the XAudio2 component object itself
-	if( FAILED( hr = pClassFactory->CreateInstance( nullptr,
-		__uuidof( IXAudio2 ),&pEngine ) ) )
-	{
-		throw SOUND_API_EXCEPTION( hr,L"Creating XAudio2 object" );
-	}
+	if( FAILED( hr = pClassFactory->CreateInstance( nullptr,__uuidof( IXAudio2 ),&pEngine ) ) ){ throw SOUND_API_EXCEPTION( hr,L"Creating XAudio2 object" ); }
 
 	// initialize the XAudio2 component object
-	if( FAILED( hr = pEngine->Initialize( 0,XAUDIO2_DEFAULT_PROCESSOR ) ) )
-	{
-		throw SOUND_API_EXCEPTION( hr,L"Initializing XAudio2 object" );
-	}
+	if( FAILED( hr = pEngine->Initialize( 0,XAUDIO2_DEFAULT_PROCESSOR ) ) ) { throw SOUND_API_EXCEPTION( hr,L"Initializing XAudio2 object" ); }
 
 	// create the mastering voice
-	if( FAILED( hr = pEngine->CreateMasteringVoice( &pMaster ) ) )
-	{
-		throw SOUND_API_EXCEPTION( hr,L"Creating mastering voice" );
-	}
+	if( FAILED( hr = pEngine->CreateMasteringVoice( &pMaster ) ) ) { throw SOUND_API_EXCEPTION( hr,L"Creating mastering voice" ); }
 
 	// create channel objects
-	for( int i = 0; i < nChannels; i++ )
-	{
-		idleChannelPtrs.push_back( std::make_unique<Channel>( *this ) );
-	}
+	for( int i = 0; i < nChannels; i++ ) { idleChannelPtrs.push_back( std::make_unique<Channel>( *this ) ); }
 }
 
-void SoundSystem::DeactivateChannel( Channel & channel )
-{
+void SoundSystem::DeactivateChannel( Channel & channel ){
 	std::lock_guard<std::mutex> lock( mutex );
-	auto i = std::find_if( activeChannelPtrs.begin(),activeChannelPtrs.end(),
-		[&channel]( const std::unique_ptr<Channel>& pChan ) -> bool
-	{
+	auto i = std::find_if( activeChannelPtrs.begin(),activeChannelPtrs.end(), [&channel]( const std::unique_ptr<Channel>& pChan ) -> bool	{
 		return &channel == pChan.get();
 	} );
 	idleChannelPtrs.push_back( std::move( *i ) );
 	activeChannelPtrs.erase( i );
 }
 
-SoundSystem::Channel::Channel( SoundSystem & sys )
-	:
-	xaBuffer( std::make_unique<XAUDIO2_BUFFER>() )
-{
-	class VoiceCallback : public IXAudio2VoiceCallback
-	{
+SoundSystem::Channel::Channel( SoundSystem & sys ) : xaBuffer( std::make_unique<XAUDIO2_BUFFER>() ){
+	class VoiceCallback : public IXAudio2VoiceCallback{
 	public:
-		void STDMETHODCALLTYPE OnStreamEnd() override
-		{}
-		void STDMETHODCALLTYPE OnVoiceProcessingPassEnd() override
-		{}
-		void STDMETHODCALLTYPE OnVoiceProcessingPassStart( UINT32 SamplesRequired ) override
-		{}
-		void STDMETHODCALLTYPE OnBufferEnd( void* pBufferContext ) override
-		{
+		void STDMETHODCALLTYPE OnStreamEnd() override {}
+		void STDMETHODCALLTYPE OnVoiceProcessingPassEnd() override {}
+		void STDMETHODCALLTYPE OnVoiceProcessingPassStart( UINT32 SamplesRequired ) override {}
+		void STDMETHODCALLTYPE OnBufferEnd( void* pBufferContext ) override		{
 			Channel& chan = *reinterpret_cast<Channel*>( pBufferContext );
 			chan.Stop();
 			{
@@ -226,37 +176,27 @@ SoundSystem::Channel::Channel( SoundSystem & sys )
 			chan.pSound = nullptr;
 			SoundSystem::Get().DeactivateChannel( chan );
 		}
-		void STDMETHODCALLTYPE OnBufferStart( void* pBufferContext ) override
-		{}
-		void STDMETHODCALLTYPE OnLoopEnd( void* pBufferContext ) override
-		{}
-		void STDMETHODCALLTYPE OnVoiceError( void* pBufferContext,HRESULT Error ) override
-		{}
+		void STDMETHODCALLTYPE OnBufferStart( void* pBufferContext ) override	{}
+		void STDMETHODCALLTYPE OnLoopEnd( void* pBufferContext ) override	{}
+		void STDMETHODCALLTYPE OnVoiceError( void* pBufferContext,HRESULT Error ) override {}
 	};
 	static VoiceCallback vcb;
 	ZeroMemory( xaBuffer.get(),sizeof( *xaBuffer ) );
 	xaBuffer->pContext = this;
 	HRESULT hr;
-	if( FAILED( hr = sys.pEngine->CreateSourceVoice( &pSource,sys.format.get(),0u,2.0f,&vcb ) ) )
-	{
-		throw SOUND_API_EXCEPTION( hr,L"Creating source voice for channel" );
-	}
+	if( FAILED( hr = sys.pEngine->CreateSourceVoice( &pSource,sys.format.get(),0u,2.0f,&vcb ) ) ){ throw SOUND_API_EXCEPTION( hr,L"Creating source voice for channel" ); }
 }
 
-SoundSystem::Channel::~Channel()
-{
+SoundSystem::Channel::~Channel(){
 	assert( !pSound );
-	if( pSource )
-	{
+	if( pSource ){
 		pSource->DestroyVoice();
 		pSource = nullptr;
 	}
 }
 
-void SoundSystem::Channel::PlaySoundBuffer( Sound& s,float freqMod,float vol )
-{
-	assert( pSource && !pSound );
-	{
+void SoundSystem::Channel::PlaySoundBuffer( Sound& s,float freqMod,float vol ){
+	assert( pSource && !pSound );{
 		std::lock_guard<std::mutex> lock( s.mutex );
 		s.activeChannelPtrs.push_back( this );
 	}
@@ -264,95 +204,55 @@ void SoundSystem::Channel::PlaySoundBuffer( Sound& s,float freqMod,float vol )
 	pSound = &s;
 	xaBuffer->pAudioData = s.pData.get();
 	xaBuffer->AudioBytes = s.nBytes;
-	if( s.looping )
-	{
+	if( s.looping ){
 		xaBuffer->LoopBegin = s.loopStart;
 		xaBuffer->LoopLength = s.loopEnd - s.loopStart;
 		xaBuffer->LoopCount = XAUDIO2_LOOP_INFINITE;
-	}
-	else
-	{
+	}	else{
 		xaBuffer->LoopCount = 0u;
 	}
 	HRESULT hr;
-	if( FAILED( hr = pSource->SubmitSourceBuffer( xaBuffer.get(),nullptr ) ) )
-	{
-		throw SOUND_API_EXCEPTION( hr,L"Starting playback - submitting source buffer" );
-	}
-	if( FAILED( hr = pSource->SetFrequencyRatio( freqMod ) ) )
-	{
-		throw SOUND_API_EXCEPTION( hr,L"Starting playback - setting frequency" );
-	}
-	if( FAILED( hr = pSource->SetVolume( vol ) ) )
-	{
-		throw SOUND_API_EXCEPTION( hr,L"Starting playback - setting volume" );
-	}
-	if( FAILED( hr = pSource->Start() ) )
-	{
-		throw SOUND_API_EXCEPTION( hr,L"Starting playback - starting" );
-	}
+	if( FAILED( hr = pSource->SubmitSourceBuffer( xaBuffer.get(),nullptr ) ) ){ throw SOUND_API_EXCEPTION( hr,L"Starting playback - submitting source buffer" ); }
+	if( FAILED( hr = pSource->SetFrequencyRatio( freqMod ) ) ){ throw SOUND_API_EXCEPTION( hr,L"Starting playback - setting frequency" ); }
+	if( FAILED( hr = pSource->SetVolume( vol ) ) ){ throw SOUND_API_EXCEPTION( hr,L"Starting playback - setting volume" ); }
+	if( FAILED( hr = pSource->Start() ) ){ throw SOUND_API_EXCEPTION( hr,L"Starting playback - starting" ); }
 }
 
-void SoundSystem::Channel::Stop()
-{
+void SoundSystem::Channel::Stop(){
 	assert( pSource && pSound );
 	pSource->Stop();
 	pSource->FlushSourceBuffers();
 }
 
-void SoundSystem::Channel::RetargetSound( const Sound* pOld,Sound* pNew )
-{
+void SoundSystem::Channel::RetargetSound( const Sound* pOld,Sound* pNew ){
 	assert( pOld == pSound );
 	pSound = pNew;
 }
 
-Sound::Sound( const std::wstring& fileName,bool loopingWithAutoCueDetect )
-	:
-	Sound( fileName,loopingWithAutoCueDetect ? 
-		LoopType::AutoEmbeddedCuePoints : LoopType::NotLooping )
-{
+Sound::Sound( const std::wstring& fileName,bool loopingWithAutoCueDetect ) : Sound( fileName,loopingWithAutoCueDetect ? LoopType::AutoEmbeddedCuePoints : LoopType::NotLooping ) {}
+
+Sound::Sound( const std::wstring& fileName,LoopType loopType ){
+	if( fileName.substr( fileName.size() - 4u,4u ) == std::wstring{ L".wav" } )	{ *this = Sound( fileName,loopType,nullSample,nullSample,nullSeconds,nullSeconds ); }
+	else{ *this = LoadNonWav( fileName,loopType,nullSample,nullSample,nullSeconds,nullSeconds ); }
 }
 
-Sound::Sound( const std::wstring& fileName,LoopType loopType )
-{
-	if( fileName.substr( fileName.size() - 4u,4u ) == std::wstring{ L".wav" } )
-	{
-		*this = Sound( fileName,loopType,nullSample,nullSample,nullSeconds,nullSeconds );
-	}
-	else
-	{
-		*this = LoadNonWav( fileName,loopType,nullSample,nullSample,nullSeconds,nullSeconds );
-	}
-}
-
-Sound::Sound( const std::wstring& fileName,unsigned int loopStart,unsigned int loopEnd )
-{
-	if( fileName.substr( fileName.size() - 4u,4u ) == std::wstring{ L".wav" } )
-	{
+Sound::Sound( const std::wstring& fileName,unsigned int loopStart,unsigned int loopEnd ){
+	if( fileName.substr( fileName.size() - 4u,4u ) == std::wstring{ L".wav" } ){
 		*this = Sound( fileName,LoopType::ManualSample,loopStart,loopEnd,nullSeconds,nullSeconds );
-	}
-	else
-	{
+	}	else{
 		*this = LoadNonWav( fileName,LoopType::ManualSample,loopStart,loopEnd,nullSeconds,nullSeconds );
 	}
 }
 
-Sound::Sound( const std::wstring& fileName,float loopStart,float loopEnd )
-{
-	if( fileName.substr( fileName.size() - 4u,4u ) == std::wstring{ L".wav" } )
-	{
+Sound::Sound( const std::wstring& fileName,float loopStart,float loopEnd ){
+	if( fileName.substr( fileName.size() - 4u,4u ) == std::wstring{ L".wav" } ){
 		*this = Sound( fileName,LoopType::ManualFloat,nullSample,nullSample,loopStart,loopEnd );
-	}
-	else
-	{
+	}	else{
 		*this = LoadNonWav( fileName,LoopType::ManualFloat,nullSample,nullSample,loopStart,loopEnd );
 	}
 }
 
-Sound Sound::LoadNonWav( const std::wstring& fileName,LoopType loopType,
-						 unsigned int loopStartSample,unsigned int loopEndSample,
-						 float loopStartSeconds,float loopEndSeconds )
-{
+Sound Sound::LoadNonWav( const std::wstring& fileName,LoopType loopType, unsigned int loopStartSample,unsigned int loopEndSample, float loopStartSeconds,float loopEndSeconds ){
 	namespace wrl = Microsoft::WRL;
 
 	// if manual float looping, second inputs cannot be null
@@ -375,68 +275,38 @@ Sound Sound::LoadNonWav( const std::wstring& fileName,LoopType loopType,
 
 	// creating source reader
 	wrl::ComPtr<IMFSourceReader> pReader;
-	if( FAILED( hr = MFCreateSourceReaderFromURL( fileName.c_str(),nullptr,&pReader ) ) )
-	{
-		throw SOUND_API_EXCEPTION( hr,L"Creating MF Source Reader\nFilename: " + fileName );
-	}
+	if( FAILED( hr = MFCreateSourceReaderFromURL( fileName.c_str(),nullptr,&pReader ) ) ){ throw SOUND_API_EXCEPTION( hr,L"Creating MF Source Reader\nFilename: " + fileName );	}
 
 	// selecting first stream
-	if( FAILED( hr = pReader->SetStreamSelection(
-		(DWORD)MF_SOURCE_READER_ALL_STREAMS,FALSE ) ) )
-	{
-		throw SOUND_API_EXCEPTION( hr,L"setting stream selection all" );
-	}
+	if( FAILED( hr = pReader->SetStreamSelection( (DWORD)MF_SOURCE_READER_ALL_STREAMS,FALSE ) ) ) { throw SOUND_API_EXCEPTION( hr,L"setting stream selection all" ); }
 
-	if( FAILED( hr = pReader->SetStreamSelection(
-		(DWORD)MF_SOURCE_READER_FIRST_AUDIO_STREAM,TRUE ) ) )
-	{
-		throw SOUND_API_EXCEPTION( hr,L"setting stream selection first" );
-	}
+	if( FAILED( hr = pReader->SetStreamSelection( (DWORD)MF_SOURCE_READER_FIRST_AUDIO_STREAM,TRUE ) ) ) { throw SOUND_API_EXCEPTION( hr,L"setting stream selection first" ); }
 
 
 	// Configuring output format
-	wrl::ComPtr<IMFMediaType> pUncompressedAudioType;
-	{
+	wrl::ComPtr<IMFMediaType> pUncompressedAudioType; {
 		wrl::ComPtr<IMFMediaType> pPartialType;
 
 		// configuring partial type
-		if( FAILED( hr = MFCreateMediaType( &pPartialType ) ) )
-		{
-			throw SOUND_API_EXCEPTION( hr,L"creating partial media type" );
-		}
+		if( FAILED( hr = MFCreateMediaType( &pPartialType ) ) ){ throw SOUND_API_EXCEPTION( hr,L"creating partial media type" ); }
 
-		if( FAILED( hr = pPartialType->SetGUID( MF_MT_MAJOR_TYPE,MFMediaType_Audio ) ) )
-		{
-			throw SOUND_API_EXCEPTION( hr,L"setting partial media type major guid" );
-		}
+		if( FAILED( hr = pPartialType->SetGUID( MF_MT_MAJOR_TYPE,MFMediaType_Audio ) ) ){ throw SOUND_API_EXCEPTION( hr,L"setting partial media type major guid" );	}
 
-		if( FAILED( hr = pPartialType->SetGUID( MF_MT_SUBTYPE,MFAudioFormat_PCM ) ) )
-		{
-			throw SOUND_API_EXCEPTION( hr,L"setting partial media type sub guid" );
-		}
+		if( FAILED( hr = pPartialType->SetGUID( MF_MT_SUBTYPE,MFAudioFormat_PCM ) ) ) { throw SOUND_API_EXCEPTION( hr,L"setting partial media type sub guid" ); }
 
 		// Set this type on the source reader. The source reader will
 		// load the necessary decoder.
-		if( FAILED( hr = pReader->SetCurrentMediaType(
-				(DWORD)MF_SOURCE_READER_FIRST_AUDIO_STREAM,
-				nullptr,pPartialType.Get() ) ) )
-		{
+		if( FAILED( hr = pReader->SetCurrentMediaType((DWORD)MF_SOURCE_READER_FIRST_AUDIO_STREAM,	nullptr,pPartialType.Get() ) ) ){
 			throw SOUND_API_EXCEPTION( hr,L"setting partial type on source reader" );
 		}
 
 		// Get the complete uncompressed format.
-		if( FAILED( hr = pReader->GetCurrentMediaType(
-				(DWORD)MF_SOURCE_READER_FIRST_AUDIO_STREAM,
-				&pUncompressedAudioType ) ) )
-		{
+		if( FAILED( hr = pReader->GetCurrentMediaType((DWORD)MF_SOURCE_READER_FIRST_AUDIO_STREAM,	&pUncompressedAudioType ) ) ){
 			throw SOUND_API_EXCEPTION( hr,L"getting complete uncompressed format" );
 		}
 
 		// Ensure the stream is selected.
-		if( FAILED( hr = pReader->SetStreamSelection(
-				(DWORD)MF_SOURCE_READER_FIRST_AUDIO_STREAM,
-				TRUE ) ) )
-		{
+		if( FAILED( hr = pReader->SetStreamSelection((DWORD)MF_SOURCE_READER_FIRST_AUDIO_STREAM,TRUE ) ) ){
 			throw SOUND_API_EXCEPTION( hr,L"making sure stream is selected (who the fuck knows?)" );
 		}
 	}
@@ -445,15 +315,12 @@ Sound Sound::LoadNonWav( const std::wstring& fileName,LoopType loopType,
 	// and verifying that format matches sound system channels
 	{
 		UINT32 cbFormat = 0;
-
 		// init smart pointer with custom deleter
-		const auto pFormat = [&]()
-		{
+		const auto pFormat = [&]() {
 			// to be temp filled with the pointer
 			WAVEFORMATEX *pFormat = nullptr;
 			// loading format info into wave format structure (callee allocated, but we must free)
-			if( FAILED( hr = MFCreateWaveFormatExFromMFMediaType( pUncompressedAudioType.Get(),&pFormat,&cbFormat ) ) )
-			{
+			if( FAILED( hr = MFCreateWaveFormatExFromMFMediaType( pUncompressedAudioType.Get(),&pFormat,&cbFormat ) ) ){
 				throw SOUND_API_EXCEPTION( hr,L"loading format info into wave format structure" );
 			}
 			return std::unique_ptr<WAVEFORMATEX,decltype(&CoTaskMemFree)>( pFormat,CoTaskMemFree );
@@ -463,55 +330,30 @@ Sound Sound::LoadNonWav( const std::wstring& fileName,LoopType loopType,
 		{
 			const WAVEFORMATEX& sysFormat = SoundSystem::GetFormat();
 
-			if( pFormat->nChannels != sysFormat.nChannels )
-			{
-				throw SOUND_FILE_EXCEPTION( fileName,L"bad decompressed wave format (nChannels)" );
-			}
-			else if( pFormat->wBitsPerSample != sysFormat.wBitsPerSample )
-			{
-				throw SOUND_FILE_EXCEPTION( fileName,L"bad decompressed wave format (wBitsPerSample)" );
-			}
-			else if( pFormat->nSamplesPerSec != sysFormat.nSamplesPerSec )
-			{
-				throw SOUND_FILE_EXCEPTION( fileName,L"bad decompressed wave format (nSamplesPerSec)" );
-			}
-			else if( pFormat->wFormatTag != sysFormat.wFormatTag )
-			{
-				throw SOUND_FILE_EXCEPTION( fileName,L"bad decompressed wave format (wFormatTag)" );
-			}
-			else if( pFormat->nBlockAlign != sysFormat.nBlockAlign )
-			{
-				throw SOUND_FILE_EXCEPTION( fileName,L"bad decompressed wave format (nBlockAlign)" );
-			}
-			else if( pFormat->nAvgBytesPerSec != sysFormat.nAvgBytesPerSec )
-			{
-				throw SOUND_FILE_EXCEPTION( fileName,L"bad decompressed wave format (nAvgBytesPerSec)" );
-			}
+			if( pFormat->nChannels != sysFormat.nChannels ){ throw SOUND_FILE_EXCEPTION( fileName,L"bad decompressed wave format (nChannels)" ); }
+			else if( pFormat->wBitsPerSample != sysFormat.wBitsPerSample ){ throw SOUND_FILE_EXCEPTION( fileName,L"bad decompressed wave format (wBitsPerSample)" ); }
+			else if( pFormat->nSamplesPerSec != sysFormat.nSamplesPerSec ){ throw SOUND_FILE_EXCEPTION( fileName,L"bad decompressed wave format (nSamplesPerSec)" ); }
+			else if( pFormat->wFormatTag != sysFormat.wFormatTag ){throw SOUND_FILE_EXCEPTION( fileName,L"bad decompressed wave format (wFormatTag)" ); }
+			else if( pFormat->nBlockAlign != sysFormat.nBlockAlign ){ throw SOUND_FILE_EXCEPTION( fileName,L"bad decompressed wave format (nBlockAlign)" );	}
+			else if( pFormat->nAvgBytesPerSec != sysFormat.nAvgBytesPerSec ){ throw SOUND_FILE_EXCEPTION( fileName,L"bad decompressed wave format (nAvgBytesPerSec)" );	}
 		}
 
 		{
 			// inheritance for automatic freeing of propvariant resources
-			struct AutoPropVariant : PROPVARIANT
-			{
-				~AutoPropVariant()
-				{
+			struct AutoPropVariant : PROPVARIANT{
+				~AutoPropVariant(){
 					PropVariantClear( this );
 				}
 			} var;
 
 			// get duration attribute (as prop variant) from reader
-			if( FAILED( hr = pReader->GetPresentationAttribute( MF_SOURCE_READER_MEDIASOURCE,
-				MF_PD_DURATION,&var ) ) )
-			{
+			if( FAILED( hr = pReader->GetPresentationAttribute( MF_SOURCE_READER_MEDIASOURCE,	MF_PD_DURATION,&var ) ) ){
 				throw SOUND_API_EXCEPTION( hr,L"getting duration attribute from reader" );
 			}
 
 			// getting int64 from duration prop variant
 			long long duration;
-			if( FAILED( hr = PropVariantToInt64( var,&duration ) ) )
-			{
-				throw SOUND_API_EXCEPTION( hr,L"getting int64 out of variant property (duration)" );
-			}
+			if( FAILED( hr = PropVariantToInt64( var,&duration ) ) ){ throw SOUND_API_EXCEPTION( hr,L"getting int64 out of variant property (duration)" ); }
 
 			// calculating number of bytes for samples (duration is in units of 100ns)
 			// (adding extra 1 sec of padding for length calculation error margin)
@@ -524,65 +366,34 @@ Sound Sound::LoadNonWav( const std::wstring& fileName,LoopType loopType,
 
 	// decode samples and copy into data buffer
 	size_t nBytesWritten = 0u;
-	while( true )
-	{
+	while( true ){
 		wrl::ComPtr<IMFSample> pSample;
 		DWORD dwFlags = 0;
 
 		// Read the next samples
-		if( FAILED( hr = pReader->ReadSample(
-			(DWORD)MF_SOURCE_READER_FIRST_AUDIO_STREAM,
-			0,nullptr,&dwFlags,nullptr,&pSample ) ) )
-		{
+		if( FAILED( hr = pReader->ReadSample((DWORD)MF_SOURCE_READER_FIRST_AUDIO_STREAM,0,nullptr,&dwFlags,nullptr,&pSample ) ) ){ 
 			throw SOUND_API_EXCEPTION( hr,L"reading next samples" );
 		}
 
-		if( dwFlags & MF_SOURCE_READERF_CURRENTMEDIATYPECHANGED )
-		{
-			throw std::runtime_error( "Type change - not supported by WAVE file format.@ ReadSample" );
-		}
-
-		if( dwFlags & MF_SOURCE_READERF_ENDOFSTREAM )
-		{
-			break;
-		}
-
-		if( pSample == nullptr )
-		{
-			continue;
-		}
+		if( dwFlags & MF_SOURCE_READERF_CURRENTMEDIATYPECHANGED ){ throw std::runtime_error( "Type change - not supported by WAVE file format.@ ReadSample" ); }
+		if( dwFlags & MF_SOURCE_READERF_ENDOFSTREAM ){ break; }
+		if( pSample == nullptr ){ continue; }
 
 		// Get a pointer to the audio data in the sample.
 		wrl::ComPtr<IMFMediaBuffer> pBuffer;
-		if( FAILED( hr = pSample->ConvertToContiguousBuffer( &pBuffer ) ) )
-		{
-			throw SOUND_API_EXCEPTION( hr,L"converting to contiguous buffer" );
-		}
+		if( FAILED( hr = pSample->ConvertToContiguousBuffer( &pBuffer ) ) ){ throw SOUND_API_EXCEPTION( hr,L"converting to contiguous buffer" ); }
 
 		BYTE *pAudioData = nullptr;
 		DWORD cbBuffer = 0;
-		if( FAILED( hr = pBuffer->Lock( &pAudioData,nullptr,&cbBuffer ) ) )
-		{
-			throw SOUND_API_EXCEPTION( hr,L"locking sample buffer" );
-		}
-
+		if( FAILED( hr = pBuffer->Lock( &pAudioData,nullptr,&cbBuffer ) ) ){ throw SOUND_API_EXCEPTION( hr,L"locking sample buffer" ); }
 		// Make sure not to exceed the size of the buffer
-		if( nBytesWritten + cbBuffer > sound.nBytes )
-		{
-			throw std::runtime_error( "too many bytes being decoded wtf??!~" );
-		}
-
+		if( nBytesWritten + cbBuffer > sound.nBytes ){ throw std::runtime_error( "too many bytes being decoded wtf??!~" ); }
 		// copy the sample bytes
 		memcpy( &sound.pData[nBytesWritten],pAudioData,cbBuffer );
-
 		// Update running total of audio data.
 		nBytesWritten += cbBuffer;
-		
 		// Unlock the buffer.
-		if( FAILED( hr = pBuffer->Unlock() ) )
-		{
-			throw SOUND_API_EXCEPTION( hr,L"unlocking sample buffer" );
-		}
+		if( FAILED( hr = pBuffer->Unlock() ) ){ throw SOUND_API_EXCEPTION( hr,L"unlocking sample buffer" ); }
 	}
 
 	// reallocate buffer for proper size
@@ -597,12 +408,8 @@ Sound Sound::LoadNonWav( const std::wstring& fileName,LoopType loopType,
 	}
 
 	// setting looping parameters
-	/////////////////////////////
-	// setting looping parameters
-	switch( loopType )
-	{
-	case LoopType::ManualFloat:
-	{
+	switch( loopType )	{
+	case LoopType::ManualFloat:{
 		sound.looping = true;
 
 		const WAVEFORMATEX& sysFormat = SoundSystem::GetFormat();
@@ -619,8 +426,7 @@ Sound Sound::LoadNonWav( const std::wstring& fileName,LoopType loopType,
 		sound.loopEnd = std::min( sound.loopEnd,nFrames - 1u );
 	}
 	break;
-	case LoopType::ManualSample:
-	{
+	case LoopType::ManualSample:{
 		sound.looping = true;
 
 		const WAVEFORMATEX& sysFormat = SoundSystem::GetFormat();
@@ -636,8 +442,7 @@ Sound Sound::LoadNonWav( const std::wstring& fileName,LoopType loopType,
 		sound.loopEnd = std::min( sound.loopEnd,nFrames - 1u );
 	}
 	break;
-	case LoopType::AutoFullSound:
-	{
+	case LoopType::AutoFullSound:{
 		sound.looping = true;
 
 		const unsigned int nFrames = sound.nBytes / SoundSystem::GetFormat().nBlockAlign;
@@ -652,15 +457,10 @@ Sound Sound::LoadNonWav( const std::wstring& fileName,LoopType loopType,
 		assert( "Bad LoopType encountered!" && false );
 		break;
 	}
-	/////////////////////////////
-
 	return std::move( sound );
 }
 
-Sound::Sound( const std::wstring& fileName,LoopType loopType,
-	unsigned int loopStartSample,unsigned int loopEndSample,
-	float loopStartSeconds,float loopEndSeconds )
-{
+Sound::Sound( const std::wstring& fileName,LoopType loopType,unsigned int loopStartSample,unsigned int loopEndSample,float loopStartSeconds,float loopEndSeconds ){
 	// if manual float looping, second inputs cannot be null
 	assert( (loopType == LoopType::ManualFloat) !=
 		(loopStartSeconds == nullSeconds || loopEndSeconds == nullSeconds) &&
@@ -670,13 +470,10 @@ Sound::Sound( const std::wstring& fileName,LoopType loopType,
 		(loopStartSample == nullSample || loopEndSample == nullSample) &&
 		"Did you pass a LoopType::Manual to the constructor? (BAD!)" );
 
-	const auto IsFourCC = []( const BYTE* pData,const char* pFourcc )
-	{
+	const auto IsFourCC = []( const BYTE* pData,const char* pFourcc ){
 		assert( strlen( pFourcc ) == 4 );
-		for( int i = 0; i < 4; i++ )
-		{
-			if( char( pData[i] ) != pFourcc[i] )
-			{
+		for( int i = 0; i < 4; i++ ){
+			if( char( pData[i] ) != pFourcc[i] ){
 				return false;
 			}
 		}
@@ -695,36 +492,25 @@ Sound::Sound( const std::wstring& fileName,LoopType loopType,
 			{
 				BYTE fourcc[4];
 				file.read( reinterpret_cast<char*>(fourcc),4u );
-				if( !IsFourCC( fourcc,"RIFF" ) )
-				{
-					throw SOUND_FILE_EXCEPTION( fileName,L"Bad fourcc code" );
-				}
+				if( !IsFourCC( fourcc,"RIFF" ) ){ throw SOUND_FILE_EXCEPTION( fileName,L"Bad fourcc code" ); }
 			}
 
 			file.read( reinterpret_cast<char*>(&fileSize),sizeof( fileSize ) );
 			fileSize += 8u; // entry doesn't include the fourcc or itself
-			if( fileSize <= 44u )
-			{
-				throw SOUND_FILE_EXCEPTION( fileName,L"file too small" );
-			}
+			if( fileSize <= 44u ){ throw SOUND_FILE_EXCEPTION( fileName,L"file too small" ); }
 
 			file.seekg( 0,std::ios::beg );
 			pFileIn = std::make_unique<BYTE[]>( fileSize );
 			file.read( reinterpret_cast<char*>(pFileIn.get()),fileSize );
 		}
 
-		if( !IsFourCC( &pFileIn[8],"WAVE" ) )
-		{
-			throw SOUND_FILE_EXCEPTION( fileName,L"format not WAVE" );
-		}
+		if( !IsFourCC( &pFileIn[8],"WAVE" ) ){ throw SOUND_FILE_EXCEPTION( fileName,L"format not WAVE" ); }
 
 		//look for 'fmt ' chunk id
 		WAVEFORMATEX format;
 		bool bFilledFormat = false;
-		for( size_t i = 12u; i < fileSize; )
-		{
-			if( IsFourCC( &pFileIn[i],"fmt " ) )
-			{
+		for( size_t i = 12u; i < fileSize; ){
+			if( IsFourCC( &pFileIn[i],"fmt " ) ){
 				memcpy( &format,&pFileIn[i + 8u],sizeof( format ) );
 				bFilledFormat = true;
 				break;
@@ -734,49 +520,26 @@ Sound::Sound( const std::wstring& fileName,LoopType loopType,
 			memcpy( &chunkSize,&pFileIn[i + 4u],sizeof( chunkSize ) );
 			i += (chunkSize + 9u) & 0xFFFFFFFEu;
 		}
-		if( !bFilledFormat )
-		{
-			throw SOUND_FILE_EXCEPTION( fileName,L"fmt chunk not found" );
-		}
+		if( !bFilledFormat ){ throw SOUND_FILE_EXCEPTION( fileName,L"fmt chunk not found" ); }
 
 		// compare format with sound system format
 		{
 			const WAVEFORMATEX& sysFormat = SoundSystem::GetFormat();
 
-			if( format.nChannels != sysFormat.nChannels )
-			{
-				throw SOUND_FILE_EXCEPTION( fileName,L"bad wave format (nChannels)" );
-			}
-			else if( format.wBitsPerSample != sysFormat.wBitsPerSample )
-			{
-				throw SOUND_FILE_EXCEPTION( fileName,L"bad wave format (wBitsPerSample)" );
-			}
-			else if( format.nSamplesPerSec != sysFormat.nSamplesPerSec )
-			{
-				throw SOUND_FILE_EXCEPTION( fileName,L"bad wave format (nSamplesPerSec)" );
-			}
-			else if( format.wFormatTag != sysFormat.wFormatTag )
-			{
-				throw SOUND_FILE_EXCEPTION( fileName,L"bad wave format (wFormatTag)" );
-			}
-			else if( format.nBlockAlign != sysFormat.nBlockAlign )
-			{
-				throw SOUND_FILE_EXCEPTION( fileName,L"bad wave format (nBlockAlign)" );
-			}
-			else if( format.nAvgBytesPerSec != sysFormat.nAvgBytesPerSec )
-			{
-				throw SOUND_FILE_EXCEPTION( fileName,L"bad wave format (nAvgBytesPerSec)" );
-			}
+			if( format.nChannels != sysFormat.nChannels ){ throw SOUND_FILE_EXCEPTION( fileName,L"bad wave format (nChannels)" );	}
+			else if( format.wBitsPerSample != sysFormat.wBitsPerSample ){	throw SOUND_FILE_EXCEPTION( fileName,L"bad wave format (wBitsPerSample)" );	}
+			else if( format.nSamplesPerSec != sysFormat.nSamplesPerSec ){	throw SOUND_FILE_EXCEPTION( fileName,L"bad wave format (nSamplesPerSec)" );	}
+			else if( format.wFormatTag != sysFormat.wFormatTag ){ throw SOUND_FILE_EXCEPTION( fileName,L"bad wave format (wFormatTag)" );	}
+			else if( format.nBlockAlign != sysFormat.nBlockAlign ){ throw SOUND_FILE_EXCEPTION( fileName,L"bad wave format (nBlockAlign)" ); }
+			else if( format.nAvgBytesPerSec != sysFormat.nAvgBytesPerSec ){ throw SOUND_FILE_EXCEPTION( fileName,L"bad wave format (nAvgBytesPerSec)" ); }
 		}
 
 		//look for 'data' chunk id
 		bool bFilledData = false;
-		for( size_t i = 12u; i < fileSize; )
-		{
+		for( size_t i = 12u; i < fileSize; ){
 			unsigned int chunkSize;
 			memcpy( &chunkSize,&pFileIn[i + 4u],sizeof( chunkSize ) );
-			if( IsFourCC( &pFileIn[i],"data" ) )
-			{
+			if( IsFourCC( &pFileIn[i],"data" ) ){
 				pData = std::make_unique<BYTE[]>( chunkSize );
 				nBytes = chunkSize;
 				memcpy( pData.get(),&pFileIn[i + 8u],nBytes );
@@ -787,99 +550,79 @@ Sound::Sound( const std::wstring& fileName,LoopType loopType,
 			// chunk size + size entry size + chunk id entry size + word padding
 			i += (chunkSize + 9u) & 0xFFFFFFFEu;
 		}
-		if( !bFilledData )
-		{
-			throw SOUND_FILE_EXCEPTION( fileName,L"data chunk not found" );
-		}
+		if( !bFilledData ){ throw SOUND_FILE_EXCEPTION( fileName,L"data chunk not found" ); }
 
-		switch( loopType )
-		{
+		switch( loopType ){
 		case LoopType::AutoEmbeddedCuePoints:
-			{
-				looping = true;
-
-				//look for 'cue' chunk id
-				bool bFilledCue = false;
-				for( size_t i = 12u; i < fileSize; )
-				{
-					unsigned int chunkSize;
-					memcpy( &chunkSize,&pFileIn[i + 4u],sizeof( chunkSize ) );
-					if( IsFourCC( &pFileIn[i],"cue " ) )
-					{
-						struct CuePoint
-						{
-							unsigned int cuePtId;
-							unsigned int pop;
-							unsigned int dataChunkId;
-							unsigned int chunkStart;
-							unsigned int blockStart;
-							unsigned int frameOffset;
-						};
-
-						unsigned int nCuePts;
-						memcpy( &nCuePts,&pFileIn[i + 8u],sizeof( nCuePts ) );
-						if( nCuePts == 2u )
-						{
-							CuePoint cuePts[2];
-							memcpy( cuePts,&pFileIn[i + 12u],sizeof( cuePts ) );
-							loopStart = cuePts[0].frameOffset;
-							loopEnd = cuePts[1].frameOffset;
-							bFilledCue = true;
-							break;
-						}
+		{
+			looping = true;
+			//look for 'cue' chunk id
+			bool bFilledCue = false;
+			for( size_t i = 12u; i < fileSize; ){
+				unsigned int chunkSize;
+				memcpy( &chunkSize,&pFileIn[i + 4u],sizeof( chunkSize ) );
+				if( IsFourCC( &pFileIn[i],"cue " ) ){
+					struct CuePoint{
+						unsigned int cuePtId;
+						unsigned int pop;
+						unsigned int dataChunkId;
+						unsigned int chunkStart;
+						unsigned int blockStart;
+						unsigned int frameOffset;
+					};
+					unsigned int nCuePts;
+					memcpy( &nCuePts,&pFileIn[i + 8u],sizeof( nCuePts ) );
+					if( nCuePts == 2u ){
+						CuePoint cuePts[2];
+						memcpy( cuePts,&pFileIn[i + 12u],sizeof( cuePts ) );
+						loopStart = cuePts[0].frameOffset;
+						loopEnd = cuePts[1].frameOffset;
+						bFilledCue = true;
+						break;
 					}
-					// chunk size + size entry size + chunk id entry size + word padding
-					i += (chunkSize + 9u) & 0xFFFFFFFEu;
 				}
-				if( !bFilledCue )
-				{
-					throw SOUND_FILE_EXCEPTION( fileName,L"loop cue chunk not found" );
-				}
+				// chunk size + size entry size + chunk id entry size + word padding
+				i += (chunkSize + 9u) & 0xFFFFFFFEu;
+			}
+			if( !bFilledCue ){
+				throw SOUND_FILE_EXCEPTION( fileName,L"loop cue chunk not found" );
+			}
+		}
+			break;
+		case LoopType::ManualFloat:{
+			looping = true;
+			const WAVEFORMATEX& sysFormat = SoundSystem::GetFormat();
+			const unsigned int nFrames = nBytes / sysFormat.nBlockAlign;
+			const unsigned int nFramesPerSec = sysFormat.nAvgBytesPerSec / sysFormat.nBlockAlign;
+			loopStart = unsigned int( loopStartSeconds * float( nFramesPerSec ) );
+			assert( loopStart < nFrames );
+			loopEnd = unsigned int( loopEndSeconds * float( nFramesPerSec ) );
+			assert( loopEnd > loopStart && loopEnd < nFrames );
+
+			// just in case ;)
+			loopStart = std::min( loopStart,nFrames - 1u );
+			loopEnd = std::min( loopEnd,nFrames - 1u );
 			}
 			break;
-		case LoopType::ManualFloat:
-			{
-				looping = true;
-
-				const WAVEFORMATEX& sysFormat = SoundSystem::GetFormat();
-				const unsigned int nFrames = nBytes / sysFormat.nBlockAlign;
-
-				const unsigned int nFramesPerSec = sysFormat.nAvgBytesPerSec / sysFormat.nBlockAlign;
-				loopStart = unsigned int( loopStartSeconds * float( nFramesPerSec ) );
-				assert( loopStart < nFrames );
-				loopEnd = unsigned int( loopEndSeconds * float( nFramesPerSec ) );
-				assert( loopEnd > loopStart && loopEnd < nFrames );
-
-				// just in case ;)
-				loopStart = std::min( loopStart,nFrames - 1u );
-				loopEnd = std::min( loopEnd,nFrames - 1u );
+		case LoopType::ManualSample:{
+			looping = true;
+			const WAVEFORMATEX& sysFormat = SoundSystem::GetFormat();
+			const unsigned int nFrames = nBytes / sysFormat.nBlockAlign;
+			assert( loopStartSample < nFrames );
+			loopStart = loopStartSample;
+			assert( loopEndSample > loopStartSample && loopEndSample < nFrames );
+			loopEnd = loopEndSample;
+			// just in case ;)
+			loopStart = std::min( loopStart,nFrames - 1u );
+			loopEnd = std::min( loopEnd,nFrames - 1u );
 			}
 			break;
-		case LoopType::ManualSample:
-			{
-				looping = true;
-
-				const WAVEFORMATEX& sysFormat = SoundSystem::GetFormat();
-				const unsigned int nFrames = nBytes / sysFormat.nBlockAlign;
-
-				assert( loopStartSample < nFrames );
-				loopStart = loopStartSample;
-				assert( loopEndSample > loopStartSample && loopEndSample < nFrames );
-				loopEnd = loopEndSample;
-
-				// just in case ;)
-				loopStart = std::min( loopStart,nFrames - 1u );
-				loopEnd = std::min( loopEnd,nFrames - 1u );
-			}
-			break;
-		case LoopType::AutoFullSound:
-			{
-				looping = true;
-
-				const unsigned int nFrames = nBytes / SoundSystem::GetFormat().nBlockAlign;
-				assert( nFrames != 0u && "Cannot auto full-loop on zero-length sound!" );
-				loopStart = 0u;
-				loopEnd = nFrames != 0u ? nFrames - 1u : 0u;
+		case LoopType::AutoFullSound:{
+			looping = true;
+			const unsigned int nFrames = nBytes / SoundSystem::GetFormat().nBlockAlign;
+			assert( nFrames != 0u && "Cannot auto full-loop on zero-length sound!" );
+			loopStart = 0u;
+			loopEnd = nFrames != 0u ? nFrames - 1u : 0u;
 			}
 			break;
 		case LoopType::NotLooping:
@@ -889,15 +632,13 @@ Sound::Sound( const std::wstring& fileName,LoopType loopType,
 			break;
 		}
 	}
-	catch( const SoundSystem::FileException& e )
-	{
+	catch( const SoundSystem::FileException& e ){
 		nBytes = 0u;
 		looping = false;
 		pData.release();
 		throw e;
 	}
-	catch( const std::exception& e )
-	{
+	catch( const std::exception& e ){
 		nBytes = 0u;
 		looping = false;
 		pData.release();
@@ -917,8 +658,7 @@ Sound::Sound( Sound&& donor )
 	loopEnd = donor.loopEnd;
 	pData = std::move( donor.pData );
 	activeChannelPtrs = std::move( donor.activeChannelPtrs );
-	for( auto& pChan : activeChannelPtrs )
-	{
+	for( auto& pChan : activeChannelPtrs ){
 		pChan->RetargetSound( &donor,this );
 	}
 	donor.cvDeath.notify_all();
@@ -929,11 +669,9 @@ Sound& Sound::operator=( Sound && donor )
 	// make sure nobody messes with our shit (also needed for cv.wait())
 	std::unique_lock<std::mutex> lock( mutex );
 	// check if there are even any active channels playing our jam
-	if( activeChannelPtrs.size() != 0u )
-	{
+	if( activeChannelPtrs.size() != 0u ){
 		// stop all channels currently playing our jam
-		for( auto pChannel : activeChannelPtrs )
-		{
+		for( auto pChannel : activeChannelPtrs ){
 			pChannel->Stop();
 		}
 		// wait for those channels to actually stop playing our jam
@@ -948,116 +686,73 @@ Sound& Sound::operator=( Sound && donor )
 	loopEnd = donor.loopEnd;
 	pData = std::move( donor.pData );
 	activeChannelPtrs = std::move( donor.activeChannelPtrs );	
-	for( auto& pChan : activeChannelPtrs )
-	{
+	for( auto& pChan : activeChannelPtrs ){
 		pChan->RetargetSound( &donor,this );
 	}
 	donor.cvDeath.notify_all();
 	return *this;
 }
 
-void Sound::Play( float freqMod,float vol )
-{
-	SoundSystem::Get().PlaySoundBuffer( *this,freqMod,vol );
-}
+void Sound::Play( float freqMod,float vol ){ SoundSystem::Get().PlaySoundBuffer( *this,freqMod,vol ); }
 
-void Sound::StopOne()
-{
+void Sound::StopOne(){
 	std::lock_guard<std::mutex> lock( mutex );
-	if( activeChannelPtrs.size() > 0u )
-	{
+	if( activeChannelPtrs.size() > 0u )	{
 		activeChannelPtrs.front()->Stop();
 	}
 }
 
-void Sound::StopAll()
-{
+void Sound::StopAll(){
 	std::lock_guard<std::mutex> lock( mutex );
-	for( auto pChannel : activeChannelPtrs )
-	{
+	for( auto pChannel : activeChannelPtrs ){
 		pChannel->Stop();
 	}
 }
 
-Sound::~Sound()
-{
+Sound::~Sound(){
 	// make sure nobody messes with our shit (also needed for cv.wait())
 	std::unique_lock<std::mutex> lock( mutex );
-
 	// check if there are even any active channels playing our jam
-	if( activeChannelPtrs.size() == 0u )
-	{
-		return;
-	}
-
+	if( activeChannelPtrs.size() == 0u ){	return; }
 	// stop all channels currently playing our jam
-	for( auto pChannel : activeChannelPtrs )
-	{
-		pChannel->Stop();
-	}
-
+	for( auto pChannel : activeChannelPtrs ){ pChannel->Stop(); }
 	// wait for those channels to actually stop playing our jam
 	cvDeath.wait( lock,[this] { return activeChannelPtrs.size() == 0u; } );
 }
 
-SoundSystem::APIException::APIException( HRESULT hr,const wchar_t * file,unsigned int line,const std::wstring & note )
-	:
-	hr( hr ),
-	Exceptions( file,line,note )
-{}
+SoundSystem::APIException::APIException( HRESULT hr,const wchar_t * file,unsigned int line,const std::wstring & note ) : hr( hr ), Exceptions( file,line,note ) {}
 
-std::wstring SoundSystem::APIException::GetFullMessage() const
-{
+std::wstring SoundSystem::APIException::GetFullMessage() const{
 	return L"Error Name: " + GetErrorName() + L"\n\n" +
 		L"Error Description: " + GetErrorDescription() + L"\n\n" +
 		L"Note: " + GetNote() + L"\n\n" +
 		L"Location: " + GetLocation();
 }
 
-std::wstring SoundSystem::APIException::GetExceptionType() const
-{
-	return L"Sound System API Exception";
-}
+std::wstring SoundSystem::APIException::GetExceptionType() const{ return L"Sound System API Exception"; }
 
-std::wstring SoundSystem::APIException::GetErrorName() const
-{
-	return DXGetErrorString( hr );
-}
+std::wstring SoundSystem::APIException::GetErrorName() const{ return DXGetErrorString( hr ); }
 
-std::wstring SoundSystem::APIException::GetErrorDescription() const
-{
+std::wstring SoundSystem::APIException::GetErrorDescription() const{
 	std::array<wchar_t,512> wideDescription;
 	DXGetErrorDescription( hr,wideDescription.data(),wideDescription.size() );
 	return wideDescription.data();
 }
 
-SoundSystem::FileException::FileException( const wchar_t* file,unsigned int line,const std::wstring& note,const std::wstring& filename )
-	:
-	Exceptions( file,line,note ),
-	filename( filename )
-{}
+SoundSystem::FileException::FileException( const wchar_t* file,unsigned int line,const std::wstring& note,const std::wstring& filename ): Exceptions( file,line,note ), filename( filename ){}
 
-std::wstring SoundSystem::FileException::GetFullMessage() const
-{
+std::wstring SoundSystem::FileException::GetFullMessage() const{
 	return L"Filename: " + filename + L"\n\n" +
 		L"Note: " + GetNote() + L"\n\n" +
 		L"Location: " + GetLocation();
 }
 
-std::wstring SoundSystem::FileException::GetExceptionType() const
-{
-	return L"Sound System File Exception";
-}
+std::wstring SoundSystem::FileException::GetExceptionType() const{ return L"Sound System File Exception"; }
 
-SoundSystem::MFInitializer::MFInitializer()
-{
-	hr = MFStartup( MF_VERSION );
-}
+SoundSystem::MFInitializer::MFInitializer(){ hr = MFStartup( MF_VERSION );}
 
-SoundSystem::MFInitializer::~MFInitializer()
-{
-	if( hr == S_OK )
-	{
+SoundSystem::MFInitializer::~MFInitializer(){
+	if( hr == S_OK ){
 		MFShutdown();
 	}
 }

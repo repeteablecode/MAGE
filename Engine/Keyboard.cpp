@@ -1,39 +1,31 @@
 #include "Keyboard.h"
 
-bool Keyboard::KeyIsPressed( unsigned char keycode ) const{
-	return keystates[keycode];
-}
+bool Keyboard::KeyIsPressed( unsigned char keycode ) const{ return keystates[keycode]; }
 
 Keyboard::Event Keyboard::ReadKey(){
 	if( keybuffer.size() > 0u )	{
 		Keyboard::Event e = keybuffer.front();
 		keybuffer.pop();
 		return e;
-	}
-	else{
+	} else{
 		return Keyboard::Event();
 	}
 }
 
-bool Keyboard::KeyIsEmpty() const{
-	return keybuffer.empty();
-}
+bool Keyboard::KeyIsEmpty() const{ return keybuffer.empty(); }
 
 char Keyboard::ReadChar(){
 	if( charbuffer.size() > 0u )	{
 		unsigned char charcode = charbuffer.front();
 		charbuffer.pop();
 		return charcode;
-	}
-	else{
+	} else{
 		return 0;
 	}
 }
 
 bool Keyboard::CharIsEmpty() const{	return charbuffer.empty();}
-
 void Keyboard::FlushKey(){ keybuffer = std::queue<Event>();}
-
 void Keyboard::FlushChar(){	charbuffer = std::queue<char>();}
 
 void Keyboard::Flush(){	
@@ -42,9 +34,7 @@ void Keyboard::Flush(){
 }
 
 void Keyboard::EnableAutorepeat(){ autorepeatEnabled = true;}
-
 void Keyboard::DisableAutorepeat(){	autorepeatEnabled = false;}
-
 bool Keyboard::AutorepeatIsEnabled() const{	return autorepeatEnabled;}
 
 void Keyboard::OnKeyPressed( unsigned char keycode ){
@@ -74,4 +64,3 @@ void Keyboard::TrimBuffer( std::queue<T>& buffer ){
 		buffer.pop();
 	}
 }
-

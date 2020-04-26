@@ -5,11 +5,9 @@
 #include "Exceptions.h"
 #include "Colors.h"
 
-class Graphics
-{
+class Graphics{
 public:
-	class Exception : public Exceptions
-	{
+	class Exception : public Exceptions{
 	public:
 		Exception( HRESULT hr,const std::wstring& note,const wchar_t* file,unsigned int line );
 		std::wstring GetErrorName() const;
@@ -21,8 +19,7 @@ public:
 	};
 private:
 	// vertex format for the framebuffer fullscreen textured quad
-	struct FSQVertex
-	{
+	struct FSQVertex{
 		float x,y,z;		// position
 		float u,v;			// texcoords
 	};
@@ -32,8 +29,7 @@ public:
 	Graphics& operator=( const Graphics& ) = delete;
 	void EndFrame();
 	void BeginFrame();
-	void PutPixel( int x,int y,int r,int g,int b )
-	{
+	void PutPixel( int x,int y,int r,int g,int b ){
 		PutPixel( x,y,{ unsigned char( r ),unsigned char( g ),unsigned char( b ) } );
 	}
 	void PutPixel( int x,int y,Color c );

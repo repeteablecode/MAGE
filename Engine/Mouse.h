@@ -4,11 +4,9 @@
 class Mouse{
 	friend class MainWindow;
 public:
-	class Event
-	{
+	class Event{
 	public:
-		enum class Type
-		{
+		enum class Type{
 			LPress,
 			LRelease,
 			RPress,
@@ -25,51 +23,17 @@ public:
 		int x;
 		int y;
 	public:
-		Event()
-			:
-			type( Type::Invalid ),
-			leftIsPressed( false ),
-			rightIsPressed( false ),
-			x( 0 ),
-			y( 0 )
-		{}
-		Event( Type type,const Mouse& parent )
-			:
-			type( type ),
-			leftIsPressed( parent.leftIsPressed ),
-			rightIsPressed( parent.rightIsPressed ),
-			x( parent.x ),
-			y( parent.y )
-		{}
-		bool IsValid() const
-		{
-			return type != Type::Invalid;
-		}
-		Type GetType() const
-		{
-			return type;
-		}
-		std::pair<int,int> GetPos() const
-		{
-			return{ x,y };
-		}
-		int GetPosX() const
-		{
-			return x;
-		}
-		int GetPosY() const
-		{
-			return y;
-		}
-		bool LeftIsPressed() const
-		{
-			return leftIsPressed;
-		}
-		bool RightIsPressed() const
-		{
-			return rightIsPressed;
-		}
+		Event() : type( Type::Invalid ), leftIsPressed( false ), rightIsPressed( false ), x( 0 ), y( 0 ){}
+		Event( Type type,const Mouse& parent ) : type( type ), leftIsPressed( parent.leftIsPressed ), rightIsPressed( parent.rightIsPressed ), x( parent.x ), y( parent.y ){}
+		bool IsValid() const{ return type != Type::Invalid; }
+		Type GetType() const{ return type; }
+		std::pair<int,int> GetPos() const { return{ x,y }; }
+		int GetPosX() const{ return x; } 
+		int GetPosY() const{ return y; }
+		bool LeftIsPressed() const{ return leftIsPressed; }
+		bool RightIsPressed() const{ return rightIsPressed; }
 	};
+
 public:
 	Mouse() = default;
 	Mouse( const Mouse& ) = delete;
@@ -81,10 +45,7 @@ public:
 	bool RightIsPressed() const;
 	bool IsInWindow() const;
 	Mouse::Event Read();
-	bool IsEmpty() const
-	{
-		return buffer.empty();
-	}
+	bool IsEmpty() const{ return buffer.empty(); }
 	void Flush();
 private:
 	void OnMouseMove( int x,int y );

@@ -7,8 +7,7 @@
 #include <string>
 
 // for granting special access to hWnd only for Graphics constructor
-class HWNDKey
-{
+class HWNDKey{
 	friend Graphics::Graphics( HWNDKey& );
 public:
 	HWNDKey( const HWNDKey& ) = delete;
@@ -19,11 +18,9 @@ protected:
 	HWND hWnd = nullptr;
 };
 
-class MainWindow : public HWNDKey
-{
+class MainWindow : public HWNDKey{
 public:
-	class Exception : public Exceptions
-	{
+	class Exception : public Exceptions{
 	public:
 		using Exceptions::Exceptions;
 		virtual std::wstring GetFullMessage() const override { return GetNote() + L"\nAt: " + GetLocation(); }
@@ -37,16 +34,10 @@ public:
 	bool IsActive() const;
 	bool IsMinimized() const;
 	void ShowMessageBox( const std::wstring& title,const std::wstring& message,UINT type = MB_OK ) const;
-	void Kill()
-	{
-		PostQuitMessage( 0 );
-	}
+	void Kill(){ PostQuitMessage( 0 ); }
 	// returns false if quitting
 	bool ProcessMessage();
-	const std::wstring& GetArgs() const
-	{
-		return args;
-	}
+	const std::wstring& GetArgs() const { return args; }
 private:
 	static LRESULT WINAPI _HandleMsgSetup( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam );
 	static LRESULT WINAPI _HandleMsgThunk( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam );

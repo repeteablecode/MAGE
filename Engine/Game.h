@@ -1,11 +1,9 @@
 #pragma once
-
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Graphics.h"
 
-class Game
-{
+class Game{
 public:
 	Game( class MainWindow& wnd );
 	Game( const Game& ) = delete;

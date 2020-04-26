@@ -16,10 +16,11 @@ MainWindow::MainWindow( HINSTANCE hInst,wchar_t * pArgs ) : args( pArgs ), hInst
 	RegisterClassEx( &wc );
 
 	// create window & get hWnd
+	//assuming res is 1980x1080 and set scren to 1024x768, so (1980-1024/2) and (1080-768/2)
 	RECT wr;
-	wr.left = 350;
+	wr.left = 478;
 	wr.right = Graphics::ScreenWidth + wr.left;
-	wr.top = 100;
+	wr.top = 156;
 	wr.bottom = Graphics::ScreenHeight + wr.top;
 	AdjustWindowRect( &wr,WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,FALSE );
 	hWnd = CreateWindow( wndClassName,L"Main Window Title",

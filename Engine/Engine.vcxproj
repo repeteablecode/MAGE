@@ -136,6 +136,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Box.h" />
     <ClInclude Include="Exceptions.h" />
     <ClInclude Include="Win.h" />
     <ClInclude Include="Colors.h" />

@@ -206,6 +206,15 @@ void Graphics::PutPixel( int x,int y,Color c ){
 	pSysBuffer[Graphics::ScreenWidth * y + x] = c;
 }
 
+void Graphics::DrawBox(int x, int y, int size, Color c)
+{
+	for (int a = y; a < (y + size); ++a) {
+		for (int b = x; b < (x + size); ++b) {
+			PutPixel(b, a, c);
+		}
+	}
+}
+
 //           Graphics Exception
 Graphics::Exception::Exception( HRESULT hr,const std::wstring& note,const wchar_t* file,unsigned int line ) : Exceptions( file,line,note ), hr( hr ) {}
 

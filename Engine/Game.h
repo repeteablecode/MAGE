@@ -14,6 +14,7 @@ private:
 	void UpdateModel();
 	/********************************/
 	/*  User Functions              */
+
 	/********************************/
 private:
 	MainWindow& wnd;

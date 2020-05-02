@@ -15,7 +15,8 @@ private:
 	void UpdateModel();
 	/********************************/
 	/*  User Functions              */
-
+	int XBound(int x, int Size);
+	int YBound(int y, int Size);
 	/********************************/
 private:
 	MainWindow& wnd;
@@ -23,7 +24,7 @@ private:
 	/********************************/
 	/*  User Variables              */
 	// create and initialize boxes
-	static constexpr int numBoxes = 3;
+	static constexpr int numBoxes = 50;
 	Box boxes[numBoxes];
 	/********************************/
 };

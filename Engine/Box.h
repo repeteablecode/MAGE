@@ -2,8 +2,6 @@
 #include "Colors.h"
 class Box {
 public:
-	Box ();
-	~Box ();
 	int X;
 	int Y;
 	int Size;
@@ -13,11 +11,3 @@ public:
 private:
 
 };
-
-Box ::Box ()
-{
-}
-
-Box ::~Box ()
-{
-}

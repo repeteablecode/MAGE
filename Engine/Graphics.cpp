@@ -206,13 +206,15 @@ void Graphics::PutPixel( int x,int y,Color c ){
 	pSysBuffer[Graphics::ScreenWidth * y + x] = c;
 }
 
-void Graphics::DrawBox(int x, int y, int size, Color c)
-{
+void Graphics::DrawBox(int x, int y, int size, Color c){
 	for (int a = y; a < (y + size); ++a) {
 		for (int b = x; b < (x + size); ++b) {
 			PutPixel(b, a, c);
 		}
 	}
+}
+
+void Graphics::DrawBox(int x, int y, int xend, int yend, int R, int G, int B){
 }
 
 //           Graphics Exception

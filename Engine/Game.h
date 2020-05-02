@@ -2,6 +2,7 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Graphics.h"
+#include "Box.h"
 
 class Game{
 public:
@@ -21,5 +22,8 @@ private:
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
+	// create and initialize boxes
+	static constexpr int numBoxes = 3;
+	Box boxes[numBoxes];
 	/********************************/
 };

@@ -11,14 +11,12 @@ Game::Game( MainWindow& wnd ):wnd( wnd ),	gfx( wnd ){
 	std::mt19937 rng(rd());
 	std::uniform_int_distribution<int> xSpeed(-3, 3);
 	std::uniform_int_distribution<int> ySpeed(-3, 3);
-	std::uniform_int_distribution<int> bSize(10, 100);
+	std::uniform_int_distribution<int> bSize(10, 300);
+	Color bColor[3] = { Colors::Red,Colors::Blue, Colors::Yellow };
+	int iColorCount = 0;
 	
-	// create and initialize boxes
-	static constexpr int numBoxes = 3;
-	Box boxes[numBoxes];
 	for (int i = 0; i < numBoxes; i++){
-		for (int i = 0; i < numBoxes; ++i) {
-		// box.c = Blue, Red, Yellow, Green ?
+
 		boxes[i].Size = bSize(rng);
 		int xMaxPos = (gfx.ScreenWidth - boxes[i].Size); // make box not width going past edge of screen
 		std::uniform_int_distribution<int> xPos(5, xMaxPos-5); // set 5 pixel buffer for start
@@ -28,13 +26,8 @@ Game::Game( MainWindow& wnd ):wnd( wnd ),	gfx( wnd ){
 		boxes[i].Y = yPos(rng);
 		boxes[i].velocityX = xSpeed(rng);
 		boxes[i].velocityY = ySpeed(rng);
-		}
-	}
-	vector <int> total(boxes, boxes + (sizeof(boxes) / sizeof(boxes[0])));
-
-//########## how compare two int types? #################
-	if (total == numBoxes) {
-		throw exception("Someone Screwed the pooch and then ate its 5th leg.");
+		if (iColorCount >= 3) { iColorCount = 0; }
+		boxes[i].c = bColor[iColorCount++];
 	}
 }
 
@@ -48,6 +41,8 @@ void Game::Go(){
 void Game::UpdateModel(){
 	// get box location
 	// get boxes speed
+	//DRAW 30000 boxes and test x,y vs y,x
+
 	// check box array and make sure count is same
 	
 	// box screen bounds check
@@ -57,5 +52,8 @@ void Game::UpdateModel(){
 
 void Game::ComposeFrame(){
 	//for each box in box[] draw box x,y,size,color
+	for (int i=0; i < numBoxes; ++i) {
+		gfx.DrawBox((boxes[i].X), boxes[i].Y, boxes[i].Size, boxes[i].c);
+	}
 	//pixel color check for overlaps here and draw or figure out in update model
 }
